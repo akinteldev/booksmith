@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 """
-Booksmith Pipeline Orchestrator
+Booksmith Pipeline Orchestrator v2
 Manages the end-to-end book creation pipeline: planning → drafting → review → logues → finalizing.
-Reads config, manages git operations, handles human gate timeout, and logs execution.
+
+Architecture:
+- Reads config.yaml for all settings (models, paths, behavior)
+- Loads templates from pipeline/templates/
+- Executes phases sequentially with git operations at boundaries
+- Handles human review gate (3-day timeout → auto-fix)
+- Comprehensive logging per run
+
+Usage: python booksmith_pipeline.py <book_name> [--dry-run]
 """
 
 import os
 import sys
 import yaml
 import json
-import shutil
 import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, List, Any
 
 
 class BooksmithPipeline:
-    def __init__(self, book_name: str):
+    def __init__(self, book_name: str, dry_run: bool = False):
         self.project_root = Path(__file__).parent.parent.resolve()
         self.config_path = self.project_root / "config.yaml"
         self.book_dir = self.project_root / "books" / book_name
@@ -32,8 +39,12 @@ class BooksmithPipeline:
         self.pipeline_dir = self.project_root / "pipeline"
         self.templates_dir = self.pipeline_dir / "templates"
         
-        # Logging
+        # State
+        self.dry_run = dry_run
         self.log_file = None
+        self.phase_data: Dict[str, Any] = {}  # Shared state between phases
+        
+        # Initialize logging
         self._init_logging()
     
     def _log(self, message: str, level: str = "INFO"):
@@ -54,6 +65,7 @@ class BooksmithPipeline:
         self.log_file = self.logs_dir / f"booksmith_{timestamp}.log"
         self._log(f"=== Booksmith Pipeline Started ===")
         self._log(f"Book: {self.book_dir.name}")
+        self._log(f"Dry Run: {self.dry_run}")
     
     def _run_git(self, *args) -> subprocess.CompletedProcess:
         """Run a git command in the project root."""
@@ -70,13 +82,17 @@ class BooksmithPipeline:
         self._log("Pulling latest changes...")
         result = self._run_git("pull", "origin", self.config["github"]["branch"])
         if result.returncode == 0:
-            self._log(f"Pull successful: {result.stdout.strip()[:100]}")
+            self._log(f"Pull successful.")
         else:
             # If repo is empty/new, this is expected - continue
             self._log("Git pull failed (may be new repo), continuing...", "WARN")
     
     def git_push(self, message: str):
         """Push changes to remote."""
+        if self.dry_run:
+            self._log(f"[DRY RUN] Would commit and push: {message}")
+            return
+        
         self._log(f"Committing and pushing: {message}")
         
         # Add all changes
@@ -100,6 +116,10 @@ class BooksmithPipeline:
     
     def git_commit(self, message: str):
         """Commit changes without pushing (for intermediate steps)."""
+        if self.dry_run:
+            self._log(f"[DRY RUN] Would commit: {message}")
+            return
+        
         result = self._run_git("add", "-A")
         status = self._run_git("status", "--porcelain")
         
@@ -126,12 +146,16 @@ class BooksmithPipeline:
     
     def write_file(self, path: Path, content: str):
         """Write content to a file."""
+        if self.dry_run:
+            self._log(f"[DRY RUN] Would write: {path.relative_to(self.project_root)}")
+            return
+        
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as f:
             f.write(content)
         self._log(f"Written: {path.relative_to(self.project_root)}")
     
-    def list_files(self, directory: Path, extension: str = None) -> list:
+    def list_files(self, directory: Path, extension: str = None) -> List[Path]:
         """List files in a directory."""
         if not directory.exists():
             return []
@@ -142,83 +166,151 @@ class BooksmithPipeline:
         
         return sorted(files)
     
-    def phase1_planning(self, reports_dir: Path):
+    def load_template(self, template_name: str) -> str:
+        """Load a template file."""
+        template_path = self.templates_dir / template_name
+        if not template_path.exists():
+            raise FileNotFoundError(f"Template not found: {template_path}")
+        return self.read_file(template_path)
+    
+    def fill_template(self, template: str, **kwargs) -> str:
+        """Fill a template with data using simple string substitution."""
+        result = template
+        for key, value in kwargs.items():
+            placeholder = "{{" + key + "}}"
+            if isinstance(value, list):
+                # Handle list placeholders (e.g., chapter table rows)
+                result = result.replace(placeholder, "\n".join(str(v) for v in value))
+            elif isinstance(value, dict):
+                # Handle dict placeholders
+                result = result.replace(placeholder, json.dumps(value, indent=2))
+            else:
+                result = result.replace(placeholder, str(value))
+        return result
+    
+    def phase1_planning(self) -> Dict[str, Any]:
         """Phase 1: Generate book bible and chapter prompts."""
         self._log("=" * 60)
         self._log("PHASE 1: PLANNING")
         self._log("=" * 60)
         
         # Read all report files
+        reports_dir = self.book_dir / "reports"
+        if not reports_dir.exists():
+            raise FileNotFoundError(f"Reports directory not found: {reports_dir}")
+        
         reports = {}
         for i, report_file in enumerate(self.list_files(reports_dir, ".md"), 1):
             reports[f"Report #{i}"] = {
-                "path": report_file,
+                "path": report_file.name,
                 "content": self.read_file(report_file)
             }
         
-        # Output paths
-        bible_path = self.book_dir / "planning" / "book_bible.md"
-        prompts_dir = self.book_dir / "planning" / "chapter_prompts"
-        prompts_dir.mkdir(exist_ok=True)
+        # Load templates
+        template_bible = self.load_template("book_bible_template.md")
+        template_prompt = self.load_template("chapter_prompt_template.md")
+        soul_planner = self.load_template("SOUL_planner.md")
         
-        # Return data for LLM processing
-        return {
+        # Prepare data for LLM execution
+        phase_data = {
             "reports": reports,
-            "bible_path": bible_path,
-            "prompts_dir": prompts_dir,
-            "template_bible": self.read_file(self.templates_dir / "book_bible_template.md"),
-            "template_prompt": self.read_file(self.templates_dir / "chapter_prompt_template.md")
+            "soul_planner": soul_planner,
+            "template_bible": template_bible,
+            "template_prompt": template_prompt,
+            "bible_path": self.book_dir / "planning" / "book_bible.md",
+            "prompts_dir": self.book_dir / "planning" / "chapter_prompts"
         }
+        
+        self._log("Phase 1 data prepared. Ready for LLM execution.")
+        return phase_data
     
-    def phase2_drafting(self, chapter_data: dict):
-        """Phase 2: Draft chapters with self-review."""
+    def phase2_drafting(self, planning_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Phase 2: Draft chapters with self-review (serial)."""
         self._log("=" * 60)
         self._log("PHASE 2: DRAFTING (Serial)")
         self._log("=" * 60)
         
-        results = []
-        total_chapters = len(chapter_data["prompts"])
+        # This is where LLM calls would happen in actual execution
+        # For now, return structure for agent delegation
         
-        for i, chapter in enumerate(chapter_data["prompts"], 1):
-            self._log(f"\n--- Drafting Chapter {i}/{total_chapters}: {chapter['title']} ---")
+        results = []
+        total_chapters = len(planning_data.get("chapter_prompts", []))
+        
+        if not planning_data.get("chapter_prompts"):
+            self._log("No chapter prompts found. Phase 2 skipped.", "WARN")
+            return results
+        
+        for i, prompt in enumerate(planning_data["chapter_prompts"], 1):
+            self._log(f"\n--- Drafting Chapter {i}/{total_chapters}: {prompt['title']} ---")
             
-            # This is where the LLM would be called to draft the chapter
-            # For now, return structure for agent execution
+            # Load templates and data for this chapter
+            template_prompt = planning_data["template_prompt"]
+            soul_author = self.load_template("SOUL_author.md")
+            template_review = self.load_template("self_review_template.md")
+            
+            # Prepare chapter-specific data
+            chapter_data = {
+                "number": i,
+                "title": prompt["title"],
+                "subtitle": prompt.get("subtitle", ""),
+                "core_question": prompt.get("core_question", ""),
+                "purpose": prompt.get("purpose", ""),
+                "must_cover": prompt.get("must_cover", []),
+                "should_include": prompt.get("should_include", []),
+                "optional": prompt.get("optional", []),
+                "source_material": prompt.get("source_material", {}),
+                "opening_guidance": prompt.get("opening_guidance", ""),
+                "body_flow": prompt.get("body_flow", []),
+                "closing_guidance": prompt.get("closing_guidance", ""),
+                "continuity_notes": prompt.get("continuity_notes", {}),
+                "word_range": prompt.get("word_range", "3000-5000")
+            }
             
             results.append({
                 "number": i,
-                "title": chapter["title"],
-                "subtitle": chapter.get("subtitle", ""),
-                "status": "pending"  # Will be updated after drafting
+                "title": chapter_data["title"],
+                "subtitle": chapter_data["subtitle"],
+                "status": "pending",  # Will be updated after drafting + review
+                "chapter_data": chapter_data,
+                "soul_author": soul_author,
+                "template_review": template_review
             })
         
-        return {
-            "results": results,
-            "chapters_dir": self.book_dir / "chapters"
-        }
+        self._log(f"Phase 2 prepared {len(results)} chapters for drafting.")
+        return results
     
-    def phase2b_review_gate(self, draft_results: list) -> dict:
+    def phase2b_review_gate(self, draft_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Phase 2b: Human review gate."""
         self._log("=" * 60)
         self._log("PHASE 2B: REVIEW GATE")
         self._log("=" * 60)
         
         # Compile flagged chapters
-        flagged = [r for r in draft_results if r.get("status") == "needs_review"]
+        approved = [r for r in draft_results if r["status"] == "approved"]
+        needs_review = [r for r in draft_results if r["status"] == "needs_review"]
         
         report = {
             "total_chapters": len(draft_results),
-            "approved": len([r for r in draft_results if r["status"] == "approved"]),
-            "flagged": flagged,
+            "approved": len(approved),
+            "flagged": len(needs_review),
+            "flagged_chapters": [
+                {
+                    "number": r["number"],
+                    "title": r["title"],
+                    "issues": r.get("review_issues", [])
+                }
+                for r in needs_review
+            ],
             "timeout_days": self.config["pipeline"]["human_gate_timeout_days"],
-            "auto_fix_on_timeout": True
+            "auto_fix_on_timeout": True,
+            "timestamp": datetime.now().isoformat()
         }
         
-        self._log(f"Review Report: {report['approved']} approved, {len(flagged)} flagged")
+        self._log(f"Review Report: {report['approved']} approved, {report['flagged']} flagged")
         
         return report
     
-    def phase3_manuscript_review(self):
+    def phase3_manuscript_review(self) -> Dict[str, Any]:
         """Phase 3: Full manuscript review."""
         self._log("=" * 60)
         self._log("PHASE 3: MANUSCRIPT REVIEW")
@@ -249,10 +341,10 @@ class BooksmithPipeline:
         return {
             "chapters": chapter_contents,
             "bible": bible_content,
-            "review_template": self.read_file(self.templates_dir / "manuscript_review_template.md")
+            "review_template": self.load_template("manuscript_review_template.md")
         }
     
-    def phase4_logues(self):
+    def phase4_logues(self) -> Dict[str, Any]:
         """Phase 4: Write supplementary material."""
         self._log("=" * 60)
         self._log("PHASE 4: LOGUES WRITING")
@@ -266,10 +358,10 @@ class BooksmithPipeline:
         
         return {
             "logue_types": list(available_logues.keys()),
-            "logue_template": self.read_file(self.templates_dir / "logues_template.md")
+            "logue_template": self.load_template("logues_template.md")
         }
     
-    def phase5_finalizing(self):
+    def phase5_finalizing(self) -> Dict[str, Any]:
         """Phase 5: Stitch all parts into final manuscript."""
         self._log("=" * 60)
         self._log("PHASE 5: FINALIZING")
@@ -280,12 +372,6 @@ class BooksmithPipeline:
         final_path = manuscript_dir / "final_manuscript.md"
         
         # Define the order of sections
-        sections_order = [
-            ("planning", "book_bible.md"),  # Optional: include bible as appendix or skip
-            ("logues", None),                # All logue files in alphabetical order
-            ("chapters", None),              # All chapter files in numerical order
-        ]
-        
         parts = []
         
         # Add logues first (foreword, intro, prologue)
@@ -328,15 +414,22 @@ class BooksmithPipeline:
             self.initialize_book()
             
             # Phase 1: Planning
-            reports_dir = self.book_dir / "reports"
-            if not reports_dir.exists():
-                self._log(f"Reports directory not found: {reports_dir}", "ERROR")
-                return False
-            
-            phase1_data = self.phase1_planning(reports_dir)
+            planning_data = self.phase1_planning()
             
             # Phase 2: Drafting (would be called by agent with LLM)
-            # This is where the actual LLM calls happen in conversation
+            draft_results = self.phase2_drafting(planning_data)
+            
+            # Phase 2b: Review Gate
+            review_report = self.phase2b_review_gate(draft_results)
+            
+            # Phase 3: Manuscript Review
+            manuscript_review = self.phase3_manuscript_review()
+            
+            # Phase 4: Logues Writing
+            logues_data = self.phase4_logues()
+            
+            # Phase 5: Finalizing
+            finalizing_data = self.phase5_finalizing()
             
             self._log("\nPipeline structure ready. Ready for agent execution.")
             return True
@@ -350,11 +443,13 @@ class BooksmithPipeline:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python booksmith_pipeline.py <book_name>")
+        print("Usage: python booksmith_pipeline.py <book_name> [--dry-run]")
         sys.exit(1)
     
     book_name = sys.argv[1]
-    pipeline = BooksmithPipeline(book_name)
+    dry_run = "--dry-run" in sys.argv
+    
+    pipeline = BooksmithPipeline(book_name, dry_run=dry_run)
     success = pipeline.run()
     
     sys.exit(0 if success else 1)
