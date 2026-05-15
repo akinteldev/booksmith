@@ -4,16 +4,26 @@
 
 Booksmith is a fully automated book creation pipeline that transforms five comprehensive research reports into a polished manuscript. The pipeline handles planning, drafting, review, supplementary writing, and final assembly — with human intervention only at the chapter quality gate.
 
+**Domain:** Cybersecurity Non-Fiction (Narrative Style)
+**Author Voice:** Elite investigative journalist ("Information, not ammunition")
+
 ## Architecture
 
-```
-Phase 1: Planning     → outline, book bible, chapter prompts
-Phase 2: Drafting     → serial chapter drafts + self-review (Claude Opus 4.7)
-Phase 2b: Review Gate → human feedback on flagged chapters (3-day timeout)
-Phase 3: Manuscript   → full manuscript review (Claude Sonnet 4.6)
-Phase 4: Logues       → foreword, intro, prologue, epilogue, glossary
-Phase 5: Finalizing   → stitch all parts into final manuscript
-```
+The pipeline is managed by a **Hermes Skill**. It runs as an on-demand task through Hermes and acts as a Project Manager:
+
+1.  **Loads Context:** Reads reports and templates from disk.
+2.  **Delegates Work:** Sends creative tasks to specialized Hermes Profiles (`booksmith-planner` and `booksmith-author`).
+3.  **Manages State:** Handles Git operations (pull/push) and file management directly using terminal tools.
+4.  **Human Gate:** Pauses at Phase 2b for review feedback via Telegram before proceeding.
+
+### Workflow Phases
+
+*   **Phase 1: Planning** → Outline, Book Bible, Chapter Prompts (Delegated to Planner)
+*   **Phase 2: Drafting** → Serial chapter drafts + self-review (Delegated to Author)
+*   **Phase 2b: Review Gate** → Human feedback on flagged chapters (3-day timeout → auto-fix)
+*   **Phase 3: Manuscript** → Full manuscript review (Delegated to Author)
+*   **Phase 4: Logues** → Foreword, intro, prologue, epilogue, glossary (Delegated to Author)
+*   **Phase 5: Finalizing** → Stitch all parts into final manuscript
 
 ## Models Used
 
@@ -36,16 +46,20 @@ booksmith/                          ← project root (git-tracked)
 ├── config.yaml                     ← pipeline configuration
 ├── README.md                       ← this file
 ├── .gitignore                      ← git ignore rules
-├── pipeline/                       ← automation code & templates
-│   ├── templates/                  ← prompt templates
-│   └── ...                         ← orchestrator scripts (future)
+├── templates/                      ← prompt templates used by the Skill
+│   ├── book_bible_template.md      ← Phase 1 output template
+│   ├── chapter_prompt_template.md  ← per-chapter prompt template
+│   ├── self_review_template.md     ← Phase 2 quality gate checklist
+│   ├── manuscript_review_template.md← Phase 3 full review format
+│   └── logues_template.md          ← Phase 4 supplementary writing guide
 ├── books/                          ← per-book monorepo subdirectories
 │   └── <book-name>/                ← each book's working directory
-│       ├── planning/               ← Phase 1 output
-│       ├── chapters/               ← Phase 2 output
-│       ├── review/                 ← Phase 3 output
-│       ├── logues/                 ← Phase 4 output
-│       └── manuscript/             ← Phase 5 output
+│       ├── reports/                ← Your 5 research reports go here
+│       ├── planning/               ← Phase 1 output (bible, prompts)
+│       ├── chapters/               ← Phase 2 output (drafted chapters)
+│       ├── review/                 ← Phase 3 output (manuscript review)
+│       ├── logues/                 ← Phase 4 output (foreword, intro, etc.)
+│       └── manuscript/             ← Phase 5 output (final stitched book)
 └── logs/                           ← execution logs per run
 ```
 
@@ -59,34 +73,33 @@ booksmith/                          ← project root (git-tracked)
 
 ### Pipeline Execution
 
-The pipeline is managed by the **Booksmith Skill**. It runs as an on-demand task through Hermes and acts as a Project Manager:
-1. Loads reports and templates from disk.
-2. Delegates creative work to specialized Hermes Profiles (`booksmith-planner` and `booksmith-author`).
-3. Handles Git operations (pull/push) and file management directly using terminal tools.
-4. Pauses at Phase 2b for human review feedback via Telegram.
+The pipeline is managed by the **Booksmith Skill** (installed at `~/.hermes/skills/booksmith/SKILL.md`). When triggered, I will:
+1. Load the skill to understand the workflow.
+2. Delegate creative work to your Hermes Profiles (`booksmith-planner` and `booksmith-author`).
+3. Handle Git operations and file management directly.
 
 ## Configuration
 
 Edit `config.yaml` to customize:
-- GitHub repo URL
-- Model selections per phase
-- Timeout settings
-- Which logues to generate
+*   GitHub repo URL
+*   Model selections per phase
+*   Timeout settings
+*   Which logues to generate
 
 ## Git Workflow
 
 The entire `booksmith/` directory is a single git repository (monorepo). Each book lives as a subdirectory under `books/`. This means:
-- One push/pull for all books
-- Shared templates and config across books
-- Simple backup and version control
+*   One push/pull for all books
+*   Shared templates and config across books
+*   Simple backup and version control
 
 Per-book commits are made during pipeline execution (e.g., one commit per drafted chapter).
 
 ## Human Intervention Points
 
-1. **Phase 2b — Chapter Review Gate** (after all ~20 chapters drafted)
-   - You receive a review report via Telegram
-   - Options: approve all, specify fixes, or handle manually
-   - Timeout: 3 days → auto-fixes applied if no response
+1.  **Phase 2b — Chapter Review Gate** (after all ~20 chapters drafted)
+    *   You receive a review report via Telegram
+    *   Options: approve all, specify fixes, or handle manually
+    *   Timeout: 3 days → auto-fixes applied if no response
 
 That's the only human gate. Everything else is fully automated.
