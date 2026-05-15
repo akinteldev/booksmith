@@ -19,7 +19,7 @@ Phase 5: Finalizing   → stitch all parts into final manuscript
 
 | Phase | Model | Role |
 |-------|-------|------|
-| Planning | Claude Sonnet 4 | Outline, book bible, chapter prompts |
+| Planning | Claude Sonnet 4.6 | Outline, book bible, chapter prompts |
 | Drafting | Claude Opus 4.7 | Chapter drafts (primary generation) |
 | Self-Review | Claude Sonnet 4.6 | Per-chapter quality gate |
 | Manuscript Review | Claude Sonnet 4.6 | Full manuscript review |
