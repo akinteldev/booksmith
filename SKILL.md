@@ -101,7 +101,6 @@ This skill orchestrates the end-to-end creation of a cybersecurity non-fiction b
 ## Templates Reference
 
 All templates are located in `pipeline/templates/`:
-*   `SOUL_planner.md` / `SOUL_author.md` (Loaded by Profiles, not passed here)
 *   `book_bible_template.md`
 *   `chapter_prompt_template.md`
 *   `self_review_template.md`
