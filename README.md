@@ -55,15 +55,15 @@ booksmith/                          ← project root (git-tracked)
 
 1. Create a new directory under `books/`: `mkdir books/<book-name>`
 2. Place the five research report markdown files in `books/<book-name>/reports/`
-3. Trigger the pipeline (via Hermes: "run booksmith pipeline for <book-name>")
+3. Trigger the pipeline via Hermes: "run booksmith for <book-name>"
 
 ### Pipeline Execution
 
-The pipeline runs as an on-demand task through Hermes. It:
-1. Pulls the latest state from git
-2. Executes each phase sequentially
-3. Pauses at Phase 2b for human review feedback
-4. Pushes all changes back to git
+The pipeline is managed by the **Booksmith Skill**. It runs as an on-demand task through Hermes and acts as a Project Manager:
+1. Loads reports and templates from disk.
+2. Delegates creative work to specialized Hermes Profiles (`booksmith-planner` and `booksmith-author`).
+3. Handles Git operations (pull/push) and file management directly using terminal tools.
+4. Pauses at Phase 2b for human review feedback via Telegram.
 
 ## Configuration
 
