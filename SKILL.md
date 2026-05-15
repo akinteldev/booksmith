@@ -19,7 +19,24 @@ This skill orchestrates the end-to-end creation of a cybersecurity non-fiction b
 2.  **Hermes Profiles:** Two profiles must exist:
     *   `booksmith-planner`: Uses Sonnet 4.6 for structural planning.
     *   `booksmith-author`: Uses Opus 4.7 for drafting/logues and Sonnet 4.6 for review.
-3.  **Book Directory:** A directory exists under `books/<book-name>/` containing a `reports/` folder with the 5 source markdown files.
+
+## Phase 0: Setup (Automatic)
+
+**Goal:** Create the book directory structure if it doesn't exist, then verify reports are present.
+
+1.  **Check Directory:** Check if `books/<book-name>/` exists.
+2.  **Create Structure:** If not, create the full directory tree with `.gitkeep` files:
+    ```
+    books/<book-name>/
+    ├── reports/          ← where research reports go
+    ├── planning/         ← Book Bible + Chapter Prompts (Phase 1)
+    ├── chapters/         ← Drafted chapters (Phase 2)
+    ├── review/           ← Manuscript review notes (Phase 3)
+    ├── logues/           ← Foreword, intro, etc. (Phase 4)
+    └── manuscript/       ← Final stitched book (Phase 5)
+    ```
+3.  **Commit Structure:** Run `git add -A && git commit -m "Initialize book directory: <book-name>"` to track the empty structure in Git.
+4.  **Verify Reports:** Check that `books/<book-name>/reports/` contains exactly 5 markdown files. If fewer, ask the user to provide them before proceeding.
 
 ## Workflow Phases
 

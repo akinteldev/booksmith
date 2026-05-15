@@ -67,9 +67,9 @@ booksmith/                          ← project root (git-tracked)
 
 ### Starting a New Book
 
-1. Create a new directory under `books/`: `mkdir books/<book-name>`
-2. Place the five research report markdown files in `books/<book-name>/reports/`
-3. Trigger the pipeline via Hermes: "run booksmith for <book-name>"
+1. Trigger the pipeline via Hermes: "run booksmith for <book-name>"
+2. The pipeline automatically creates the full directory structure and commits it to Git
+3. Drop your five research report markdown files into `books/<book-name>/reports/`
 
 ### Pipeline Execution
 
