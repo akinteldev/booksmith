@@ -8,18 +8,53 @@
 
 ---
 
-## Voice & Style Guidelines
+## Style & Voice Guidelines
 
-### Tone
-{{tone_description}}
+### Tone: Urgent and Chilling
+Establish a tone that is dramatically urgent, chilling, and deeply authoritative. Write with the gravity of an existential warning. Be direct. Be unflinching. Never sensationalize beyond what the facts warrant, but never soften them either.
 
-### Writing Style
-- **POV:** {{narrative_perspective}}
-- **Tense:** {{tense}}
-- **Sentence rhythm:** {{style_notes}}
-- **Reading level:** {{target_audience}}
-- **Do:** {{positive_guidelines}}
-- **Don't:** {{negative_guidelines}}
+### Cybersecurity for Everyone (The Metaphor Rule)
+Never use a technical acronym without immediately translating it into a brilliant, everyday metaphor. Make the invisible digital world feel physical, tangible, and fragile.
+
+*   **Cloud architecture** = a physical office building with floors, security checkpoints, and master keys
+*   **Digital tokens** = hotel keycards that grant access to specific rooms
+*   **Firewalls** = the security desk at a corporate lobby
+*   **Zero-day exploits** = a master key forged before the lock even exists
+*   **Phishing** = a con artist wearing a uniform that looks exactly right
+
+Every technical concept must land in the reader's mind as something they can *see*, *touch*, and *feel*.
+
+### Pacing: The Techno-Thriller
+Maintain the driving, relentless momentum of a high-stakes thriller. Every sentence should pull the reader forward.
+
+*   Ground every scene in the cold, serious reality of modern cyber warfare.
+*   Build suspense by emphasizing scale, speed, and severe consequences.
+*   Treat every digital action with the gravity of a physical break-in.
+*   Use short, punchy sentences for impact. Longer, flowing prose for context and atmosphere.
+*   End sections on hooks that demand the reader continue.
+
+### The "So What?" Factor
+Always connect dense technical data back to the reader's everyday life. Show exactly how these invisible digital shifts threaten:
+
+*   Their bank accounts and financial security
+*   Their privacy and personal data
+*   Critical infrastructure (power grids, hospitals, water systems)
+*   Their physical safety
+
+The reader should finish every chapter thinking: *"This isn't happening to someone else. This is happening to me."*
+
+### Handling Source Material: The "No Hallucination" Rule
+
+#### The Factual Skeleton
+The uploaded reports are your absolute ground truth. You must faithfully represent every trend, mechanic, and capability described. Never invent statistics, threat actors, technical capabilities, or specific incidents that are not in the source material.
+
+#### The Narrative Device: Hypothetical Vignettes
+To humanize abstract trends, you will use **Hypothetical Vignettes** to set scenes. You are allowed — and expected — to invent realistic, unnamed characters (e.g., *"an exhausted IT admin in Chicago,"* *"a distracted mid-level manager,"* *"a voice on the other end of a phone call"*) strictly to demonstrate the exact technical attacks described in the report.
+
+The vignette is your bridge between data and empathy. It must:
+*   Illustrate a real attack vector from the report
+*   Feel authentic and grounded in reality
+*   Never invent capabilities, tools, or tactics not present in the source material
 
 ---
 
@@ -55,11 +90,6 @@
 
 ### Contradictions to Avoid
 {{potential_conflicts}}
-
----
-
-## Character / Entity Guidelines (if applicable)
-{{character_or_entity_rules}}
 
 ---
 
