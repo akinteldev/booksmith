@@ -6,14 +6,6 @@ github:
   repo_url: "git@github.com:akinteldev/booksmith.git"
   branch: "main"
 
-# --- Model Selection ---
-models:
-  planning:    "anthropic/claude-sonnet-4.6"               # outline, bible, chapter prompts
-  drafting:    "anthropic/claude-opus-4.7"               # chapter drafts (heavy lifting)
-  self_review: "anthropic/claude-sonnet-4.6"             # per-chapter quality gate
-  manuscript_review: "anthropic/claude-sonnet-4.6"       # full manuscript review
-  logues:      "anthropic/claude-opus-4.7"               # foreword, intro, prologue, epilogue, glossary
-
 # --- Pipeline Behavior ---
 pipeline:
   chapters_serial: true                                    # draft one chapter at a time
