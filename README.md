@@ -9,21 +9,48 @@ Booksmith is a fully automated book creation pipeline that transforms five compr
 
 ## Architecture
 
-The pipeline is managed by a **Hermes Skill**. It runs as an on-demand task through Hermes and acts as a Project Manager:
+The pipeline is managed by a **Hermes Skill** that orchestrates work through a **Kanban board**. All phases are queued as linked tasks on the `booksmith` Kanban board — the dispatcher executes them sequentially via parent-child dependencies, giving full visibility into every phase.
 
-1.  **Loads Context:** Reads reports and templates from disk.
-2.  **Delegates Work:** Sends creative tasks to specialized Hermes Profiles (`booksmith-planner` and `booksmith-author`).
-3.  **Manages State:** Handles Git operations (pull/push) and file management directly using terminal tools.
-4.  **Human Gate:** Pauses at Phase 2b for review feedback via Telegram before proceeding.
+### How It Works
 
-### Workflow Phases
+```
+You invoke skill → Phase 0 creates directory + queues all Kanban tasks → 
+Dispatcher picks up T1 (planner) → completes → auto-promotes T2 (author) → 
+Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 execute automatically
+```
 
-*   **Phase 1: Planning** → Outline, Book Bible, Chapter Prompts (Delegated to Planner)
-*   **Phase 2: Drafting** → Serial chapter drafts + self-review (Delegated to Author)
-*   **Phase 2b: Review Gate** → Human feedback on flagged chapters (3-day timeout → auto-fix)
-*   **Phase 3: Manuscript** → Full manuscript review (Delegated to Author)
-*   **Phase 4: Logues** → Foreword, intro, prologue, epilogue, glossary (Delegated to Author)
-*   **Phase 5: Finalizing** → Stitch all parts into final manuscript
+**Key principles:**
+- **Kanban-driven, not hidden delegation.** Every phase is a visible task on the board. No invisible `delegate_task` calls — you can see exactly what's running, stuck, or done at any time.
+- **Parent-child linking enforces sequence.** T2 waits for T1 to complete; T3 waits for T2; and so on. The dispatcher auto-promotes children when parents finish (polls every ~60s).
+- **Human-in-the-loop via blocking.** At the review gate, Phase 2 calls `kanban_block()` with flagged chapters. You provide feedback via `/unblock <task_id>` and execution resumes.
+
+### Prerequisites
+
+Before running the pipeline:
+
+1. **Hermes Profiles** must exist:
+   - `booksmith-planner` (Sonnet 4.6 for planning)
+   - `booksmith-author` (Opus 4.7 for drafting/logues, Sonnet 4.6 for review)
+2. **Gateways must be running.** Start them manually before invoking the skill:
+   ```bash
+   booksmith-planner gateway start
+   booksmith-author gateway start
+   ```
+3. **Git repository** at `/home/emkay/projects/booksmith/` with remote configured (`origin`).
+
+### Workflow Phases (Kanban Tasks)
+
+| Task | Title | Assignee | Description |
+|------|-------|----------|-------------|
+| T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts |
+| T2 | Phase 2: Drafting | booksmith-author | Serial chapter drafts with self-review. Blocks if chapters need human review. |
+| T3 | Phase 3: Manuscript Review | booksmith-author | Full manuscript review for pacing, continuity, redundancy |
+| T4 | Phase 4: Logues Writing | booksmith-author | Foreword, intro, epilogue, glossary (configurable) |
+| T5 | Phase 5: Finalizing | default | Stitch all parts into final manuscript, commit & push |
+
+**Human intervention points:**
+- **Phase 0:** You place your 5 research reports in the created `reports/` folder and reply "ready"
+- **Phase 2b (Review Gate):** If chapters are flagged during self-review, Phase 2 blocks itself. You review via Telegram and unblock with `/unblock <task_id>` after providing feedback. Timeout: 3 days → auto-fixes applied if no response.
 
 ## Models Used
 
@@ -38,6 +65,8 @@ The pipeline is managed by a **Hermes Skill**. It runs as an on-demand task thro
 ## Estimated Cost
 
 ~$55–70 per book (drafting dominates at ~85% of cost). Prompt caching can reduce this by 30-50%.
+
+**Test runs:** Validate the pipeline with local models and shorter reports before committing to frontier model costs. See `references/test-run-strategy.md`.
 
 ## Directory Structure
 
@@ -60,31 +89,55 @@ booksmith/                          ← project root (git-tracked)
 │       ├── review/                 ← Phase 3 output (manuscript review)
 │       ├── logues/                 ← Phase 4 output (foreword, intro, etc.)
 │       └── manuscript/             ← Phase 5 output (final stitched book)
-└── logs/                           ← execution logs per run
+├── logs/                           ← execution logs per run
+└── SKILL.md                        ← pipeline orchestration instructions
 ```
 
-## Usage
+## Usage Guide
 
 ### Starting a New Book
 
-1. Trigger the pipeline via Hermes: "run booksmith for <book-name>"
-2. The pipeline automatically creates the full directory structure and commits it to Git
-3. Drop your five research report markdown files into `books/<book-name>/reports/`
+1. **Start gateways** (if not already running):
+   ```bash
+   booksmith-planner gateway start
+   booksmith-author gateway start
+   ```
 
-### Pipeline Execution
+2. **Invoke the skill:** Send "run booksmith for <book-name>" via Telegram. The book name is normalized to lowercase-hyphens (e.g., "Zero Trust" → `zero-trust`).
 
-The pipeline is managed by the **Booksmith Skill** (installed at `~/.hermes/skills/booksmith/SKILL.md`). When triggered, I will:
-1. Load the skill to understand the workflow.
-2. Delegate creative work to your Hermes Profiles (`booksmith-planner` and `booksmith-author`).
-3. Handle Git operations and file management directly.
+3. **Phase 0 runs automatically:**
+   - Creates `books/<book-name>/` with all subdirectories + `.gitkeep` files
+   - Commits the empty structure to Git
+   - Notifies you: "Directory created at `books/<book-name>/reports/`. Drop your 5 research reports there and reply 'ready' when done."
+
+4. **Place your reports:** Copy/move your 5 research report markdown files into `books/<book-name>/reports/`
+
+5. **Reply "ready"** to confirm. Phase 0 verifies the 5 files exist, then creates all 5 Kanban tasks with parent-child linking and queues them on the board.
+
+6. **Monitor progress:** The dispatcher picks up T1 automatically. Watch the `booksmith` Kanban board as each task moves from `todo` → `ready` → `done`.
+
+### Monitoring & Control
+
+- **View board status:** `hermes kanban --board booksmith list --json`
+- **Inspect a task:** `hermes kanban show <task_id>` (e.g., `t_f40b7340`)
+- **Unblock at review gate:** `/unblock <task_id>` after providing feedback on flagged chapters
+- **Reclaim stuck tasks:** If a worker crashes, use `hermes kanban reclaim <task_id>` to reset it
+
+### Reusing the Kanban Board
+
+The `booksmith` board is persistent and reused across book projects. When starting a new book:
+1. Old completed tasks are archived automatically in Phase 0
+2. New tasks T1–T5 are created fresh for the new book
+3. The board accumulates history — archive old books periodically with `hermes kanban --board booksmith archive <task_ids...>`
 
 ## Configuration
 
 Edit `config.yaml` to customize:
 *   GitHub repo URL
-*   Model selections per phase
-*   Timeout settings
-*   Which logues to generate
+*   Which logues to generate (`logues_included`)
+*   Pipeline behavior (serial drafting, review timeout days)
+
+**Note:** Model selections are managed by Hermes Profiles, not in `config.yaml`. Edit profile settings via `hermes -p <profile-name> model` or the profile config files.
 
 ## Git Workflow
 
@@ -93,13 +146,17 @@ The entire `booksmith/` directory is a single git repository (monorepo). Each bo
 *   Shared templates and config across books
 *   Simple backup and version control
 
-Per-book commits are made during pipeline execution (e.g., one commit per drafted chapter).
+Per-book commits are made during pipeline execution:
+- Phase 0: "Initialize book directory"
+- Phase 2: One commit per drafted chapter ("Draft chapter X")
+- Phase 5: "Final manuscript assembled" + push to remote
 
-## Human Intervention Points
+## Troubleshooting
 
-1.  **Phase 2b — Chapter Review Gate** (after all ~20 chapters drafted)
-    *   You receive a review report via Telegram
-    *   Options: approve all, specify fixes, or handle manually
-    *   Timeout: 3 days → auto-fixes applied if no response
-
-That's the only human gate. Everything else is fully automated.
+| Problem | Solution |
+|---------|----------|
+| Task stuck in `todo` | Parent didn't complete, or gateway for that profile isn't running. Check with `hermes kanban show <task_id>` |
+| Task assigned to unknown profile | Dispatcher silently drops tasks assigned to non-existent profiles. Verify assignee is `booksmith-planner`, `booksmith-author`, or `default` |
+| Gateway not responding | Start manually: `<profile-name> gateway start`. Gateways are off by default for cost control |
+| Missing reports error | Phase 0 requires exactly 5 markdown files in `reports/`. Place them and reply "ready" |
+| Git push fails | Check remote is configured correctly (`git remote -v`) |
