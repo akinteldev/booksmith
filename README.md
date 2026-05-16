@@ -28,10 +28,11 @@ Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 exe
 
 Before running the pipeline:
 
-1. **Hermes Profiles** must exist:
+1. **Hermes Profiles** must exist and be configured with your chosen models:
    - `booksmith-planner` (Sonnet 4.6 for planning)
-   - `booksmith-author` (Opus 4.7 for drafting/logues, Sonnet 4.6 for review)
-2. **Gateways must be running.** Start them manually before invoking the skill:
+   - `booksmith-author` (Opus 4.7 for drafting/logues, Sonnet 4.6 for review — *or use Sonnet 4.6 for all phases during test runs to reduce costs*)
+
+**Note:** Model selections are managed by Hermes Profiles, not in `config.yaml`. Edit profile settings via `hermes -p <profile-name> model` or the profile config files. You can switch models per-profile at any time without touching the pipeline logic.
    ```bash
    booksmith-planner gateway start
    booksmith-author gateway start

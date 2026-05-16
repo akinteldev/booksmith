@@ -6,7 +6,17 @@
 ## Source Material Summary
 {{summary_of_five_reports}}
 
----
+## Report Mapping (CRITICAL — do not skip)
+
+This section maps each report number to its exact filename and topic. It prevents confusion in later phases about which report covers what subject matter.
+
+| Report # | Filename | Source Authorities | Core Topic Covered |
+|----------|----------|-------------------|---------------------|
+| 1 | {{report_1_filename}} | {{report_1_sources}} | {{report_1_topic}} |
+| 2 | {{report_2_filename}} | {{report_2_sources}} | {{report_2_topic}} |
+| 3 | {{report_3_filename}} | {{report_3_sources}} | {{report_3_topic}} |
+| 4 | {{report_4_filename}} | {{report_4_sources}} | {{report_4_topic}} |
+| 5 | {{report_5_filename}} | {{report_5_sources}} | {{report_5_topic}} |
 
 ## Style & Voice Guidelines
 
@@ -56,8 +66,6 @@ The vignette is your bridge between data and empathy. It must:
 *   Feel authentic and grounded in reality
 *   Never invent capabilities, tools, or tactics not present in the source material
 
----
-
 ## Structural Blueprint
 
 ### Total Chapters: {{chapter_count}}
@@ -71,9 +79,7 @@ The vignette is your bridge between data and empathy. It must:
 |---|-------|----------|---------------|-------------|
 | 1 | {{ch1_title}} | {{ch1_subtitle}} | {{ch1_question}} | Report #X, #Y |
 | 2 | {{ch2_title}} | {{ch2_subtitle}} | {{ch2_question}} | Report #X, #Y |
-...
-
----
+| ... |
 
 ## Continuity Rules
 
@@ -91,8 +97,6 @@ The vignette is your bridge between data and empathy. It must:
 ### Contradictions to Avoid
 {{potential_conflicts}}
 
----
-
 ## Research Integration Rules
 
 ### How to Use Source Material
@@ -102,8 +106,6 @@ The vignette is your bridge between data and empathy. It must:
 
 ### Required Inclusions Per Chapter
 {{chapter_specific_requirements}}
-
----
 
 ## Glossary of Key Terms (to be expanded)
 {{initial_glossary}}
