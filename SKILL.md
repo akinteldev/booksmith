@@ -73,6 +73,8 @@ t1 = kanban_create(
 
 CRITICAL: At the top of the Book Bible, include an explicit 'Report Mapping' section that lists each report number (1-5) alongside its exact filename, source authorities, and core topic. This crosswalk prevents confusion in later phases about which report covers what subject matter.
 
+Derive both a **Title** and a **Subtitle** for the book from the reports. The title should be punchy and memorable; the subtitle should clarify the book's scope (e.g., "How Cybercriminal Organizations Became the Internet's Most Efficient Enterprise"). Populate both fields in the Book Bible header.
+
 IMPORTANT FORMATTING RULES:
 - NO horizontal rules (`---`) anywhere in output — these break docx conversion for Kindle Create.
 - Use section headers (##, ###) instead of separators to divide content.
