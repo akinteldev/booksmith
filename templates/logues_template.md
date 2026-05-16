@@ -4,8 +4,6 @@
 
 You are writing supplementary material for a book based on five research reports. The full manuscript has been drafted and reviewed. Use the book bible and chapter content to ensure consistency.
 
----
-
 ## {{logue_type}}
 
 ### Purpose of This Piece
@@ -32,8 +30,6 @@ Match the book bible's voice guidelines exactly. This piece should feel like it 
 - Book Bible: /planning/book_bible.md
 - Manuscript chapters are in /chapters/
 - Key concepts to reference: {{concepts_to_reference}}
-
----
 
 ## Writing Instructions
 

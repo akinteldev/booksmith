@@ -1,15 +1,10 @@
 # Chapter {{chapter_number}}: {{chapter_title}}
 
-## Subtitle
-{{subtitle}}
-
 ## Core Question
 {{core_question}}
 
 ## Purpose in the Book
 {{why_this_chapter_exists}}
-
----
 
 ## Required Content
 
@@ -25,8 +20,6 @@
 ### Optional (if it fits naturally)
 - {{nice_to_have}}
 
----
-
 ## Source Material Focus
 
 Primary sources for this chapter:
@@ -34,8 +27,6 @@ Primary sources for this chapter:
 
 Key data points, quotes, or findings to incorporate:
 - {{specific_data_or_quotes}}
-
----
 
 ## Structural Requirements
 
@@ -50,19 +41,11 @@ Key data points, quotes, or findings to incorporate:
 ### Closing
 {{closing_guidance}} — summarize key takeaway, set up next chapter if applicable
 
----
-
 ## Continuity Notes
 
-### References to Other Chapters
-- Mention: Chapter {{ref_chapter}} (topic)
-- Build on: Chapter {{ref_chapter}}'s framework about X
-- Foreshadow: Topic that appears in Chapter {{foreshadow_chapter}}
-
-### Terms & Concepts to Use
-{{required_terms_or_concepts}}
-
----
+### Thematic Links (use sparingly)
+- Consider whether the theme of Chapter {{ref_chapter}} resonates here naturally — only mention it if it flows organically. Do NOT write "Chapter X explains..." or explicit cross-references unless genuinely necessary. Maximum ONE such reference per chapter.
+- Concepts that may naturally recur: {{required_terms_or_concepts}}
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly

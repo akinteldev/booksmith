@@ -87,12 +87,12 @@ The vignette is your bridge between data and empathy. It must:
 {{themes_list}}
 
 ### Key Concepts (must appear in specified chapters)
-- **Concept A:** introduced in Ch X, referenced in Ch Y, Z
+- **Concept A:** introduced in Ch X, may naturally recur in Ch Y, Z
 - **Concept B:** introduced in Ch X, developed through Ch Y-Z
 
-### Cross-Chapter Dependencies
-- Chapter N must reference the conclusion of Chapter M
-- Chapter P builds on a framework established in Chapter Q
+### Cross-Chapter Dependencies (advisory — not prescriptive)
+- Consider whether Chapter N's theme resonates with Chapter M's conclusion. Only weave connections organically into prose; do NOT write explicit "As discussed in Chapter X" references unless genuinely necessary. Maximum ONE cross-chapter reference per chapter.
+- Concepts from earlier chapters may naturally surface later without explicit mention — let the narrative flow carry them forward.
 
 ### Contradictions to Avoid
 {{potential_conflicts}}
