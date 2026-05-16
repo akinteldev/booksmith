@@ -1,6 +1,6 @@
 ---
 name: booksmith
-description: Automated book creation pipeline orchestrator for cybersecurity non-fiction. Manages planning, drafting, review, and finalizing phases using delegated Hermes profiles.
+description: Automated book creation pipeline orchestrator for cybersecurity non-fiction. Manages planning, drafting, review, and finalizing phases using Kanban board orchestration with specialized Hermes Profiles.
 category: productivity
 ---
 
@@ -8,7 +8,7 @@ category: productivity
 
 ## Overview
 
-This skill orchestrates the end-to-end creation of a cybersecurity non-fiction book from five research reports. It manages the workflow across 5 phases, delegating creative work to specialized Hermes Profiles (`booksmith-planner` and `booksmith-author`) while handling file I/O and Git operations directly.
+This skill orchestrates the end-to-end creation of a cybersecurity non-fiction book from five research reports. It uses a **Kanban board** for task management — all work is queued as linked tasks that execute sequentially via the dispatcher, giving full visibility into every phase.
 
 **Domain:** Cybersecurity Non-Fiction (Narrative Style)
 **Author Voice:** Elite investigative journalist ("Information, not ammunition")
@@ -20,12 +20,30 @@ This skill orchestrates the end-to-end creation of a cybersecurity non-fiction b
     *   `booksmith-planner`: Uses Sonnet 4.6 for structural planning.
     *   `booksmith-author`: Uses Opus 4.7 for drafting/logues and Sonnet 4.6 for review.
 
-## Phase 0: Setup (Automatic)
+## Kanban Architecture
 
-**Goal:** Create the book directory structure if it doesn't exist, then verify reports are present.
+The pipeline uses a Kanban board with parent-child task linking to enforce sequential execution:
 
-1.  **Check Directory:** Check if `books/<book-name>/` exists.
-2.  **Create Structure:** If not, create the full directory tree with `.gitkeep` files:
+```
+T1: Planning → T2: Drafting + Review Gate → T3: Manuscript Review → T4: Logues Writing → T5: Finalizing
+```
+
+- Tasks are created upfront in Phase 0 with proper parent links.
+- The dispatcher auto-promotes child tasks when parents complete (polls every ~60s).
+- Human-in-the-loop is handled via `kanban_block()` at the review gate — the task blocks itself, user provides feedback via `/unblock`, then execution resumes.
+- All task execution is visible on the Kanban board dashboard.
+
+**Task creation method:** Use the Python API (`kanban_create()`) for parent-child linking. If unavailable, fall back to CLI: `hermes kanban --board booksmith create "Title" --body "Body" --assignee profile`.
+
+## Workflow Phases
+
+### Phase 0: Setup (Automatic)
+
+**Goal:** Create directory structure, notify user where to place reports, verify inputs, then create all Kanban tasks with parent-child linking.
+
+1.  **Extract Book Name:** Parse `<book-name>` from the invocation message (e.g., "Run booksmith for 'Zero Trust'" → `zero-trust`). Normalize: lowercase, hyphens for spaces.
+2.  **Check Directory:** Check if `books/<book-name>/` exists in `/home/emkay/projects/booksmith/`.
+3.  **Create Structure:** If not, create the full directory tree with `.gitkeep` files:
     ```
     books/<book-name>/
     ├── reports/          ← where research reports go
@@ -35,80 +53,83 @@ This skill orchestrates the end-to-end creation of a cybersecurity non-fiction b
     ├── logues/           ← Foreword, intro, etc. (Phase 4)
     └── manuscript/       ← Final stitched book (Phase 5)
     ```
-3.  **Commit Structure:** Run `git add -A && git commit -m "Initialize book directory: <book-name>"` to track the empty structure in Git.
-4.  **Verify Reports:** Check that `books/<book-name>/reports/` contains exactly 5 markdown files. If fewer, ask the user to provide them before proceeding.
+4.  **Commit Structure:** Run `git add -A && git commit -m "Initialize book directory: <book-name>"`.
+5.  **Notify User:** Send a message via Telegram:
+    > "**Booksmith Setup Complete**\nDirectory created at `books/<book-name>/reports/`. Drop your 5 research reports there and reply 'ready' when done."
+6.  **Wait for Confirmation:** Pause execution until the user replies confirming they've placed their reports.
+7.  **Verify Reports:** Check that `books/<book-name>/reports/` contains exactly 5 markdown files. If fewer, ask the user to provide them before proceeding.
+8.  **Archive Old Tasks (if any):** Archive any existing tasks on the `booksmith` board from previous runs:
+    ```bash
+    hermes kanban --board booksmith list --json | python3 -c "import sys,json; [print(t['id']) for t in json.load(sys.stdin) if t.get('completed_at')]"
+    ```
+    Then archive them: `hermes kanban --board booksmith archive <task_ids...>`
+9.  **Create Kanban Tasks:** Create all pipeline tasks with parent-child linking (capture each task ID and pass it as a parent to the next):
 
-## Workflow Phases
+```python
+t1 = kanban_create(
+    title="Phase 1: Planning - Generate Book Bible & Prompts",
+    assignee="booksmith-planner",
+    body=f"Analyze the five research reports in books/{book_name}/reports/. Generate a comprehensive Book Bible and individual Chapter Prompts following templates/book_bible_template.md and templates/chapter_prompt_template.md. Save output to books/{book_name}/planning/.",
+)[task_id]
 
-### Phase 1: Planning (Delegated)
+t2 = kanban_create(
+    title="Phase 2: Drafting - Serial Chapter Generation & Self-Review",
+    assignee="booksmith-author",
+    body=f"Draft all chapters serially from prompts in books/{book_name}/planning/chapter_prompts/. For each chapter: read the prompt + book bible, draft the chapter, self-review against templates/self_review_template.md. Save drafts to books/{book_name}/chapters/. If any chapter is flagged as 'needs_review', compile a summary and block this task with the issues using kanban_block(). Wait for user feedback via /unblock before proceeding.",
+    parents=[t1],
+)[task_id]
 
-**Goal:** Create the Book Bible and Chapter Prompts.
+t3 = kanban_create(
+    title="Phase 3: Manuscript Review - Full Text Analysis",
+    assignee="booksmith-author",
+    body=f"Review the complete manuscript in books/{book_name}/chapters/. Check for pacing, cross-chapter continuity, and redundancy. Save notes to books/{book_name}/review/manuscript_review.md.",
+    parents=[t2],
+)[task_id]
 
-1.  **Load Context:** Read all `.md` files from `books/<book-name>/reports/`.
-2.  **Delegate to Planner:** Use `delegate_task` to send the reports to the `booksmith-planner` profile with this instruction:
-    > "Analyze these five research reports and generate a comprehensive Book Bible and individual Chapter Prompts for each chapter. Follow the structure defined in `pipeline/templates/book_bible_template.md` and `pipeline/templates/chapter_prompt_template.md`. Save the output to `books/<book-name>/planning/`."
-3.  **Verify:** Ensure `book_bible.md` and `chapter_prompts/` directory are created with content.
+t4 = kanban_create(
+    title="Phase 4: Logues Writing - Foreword, Intro, Epilogue, Glossary",
+    assignee="booksmith-author",
+    body=f"Write supplementary material based on the manuscript and book bible. Check config.yaml for which logues are enabled (logues_included). Write each enabled logue type and save to books/{book_name}/logues/.",
+    parents=[t3],
+)[task_id]
 
-### Phase 2: Drafting (Delegated, Serial)
+t5 = kanban_create(
+    title="Phase 5: Finalizing - Stitch & Assemble Manuscript",
+    assignee="default",
+    body=f"Assemble all logues (alphabetical) and chapters (numerical) into a final manuscript. Add Title Page and Copyright Notice. Save to books/{book_name}/manuscript/final_manuscript.md. Commit and push to remote.",
+    parents=[t4],
+)[task_id]
+```
 
-**Goal:** Write all chapters one by one with self-review.
+10. **Report Back:** Tell the user: "All 5 phases queued on Kanban board. Dispatcher will execute sequentially — you'll see progress as each task moves from ready → done."
 
-1.  **Iterate Chapters:** For each chapter prompt in `books/<book-name>/planning/chapter_prompts/`:
-    *   **Load Context:** Read the specific chapter prompt and the Book Bible (`books/<book-name>/planning/book_bible.md`).
-    *   **Delegate to Author:** Use `delegate_task` to send the data to the `booksmith-author` profile with this instruction:
-        > "Draft Chapter {{number}} using the provided prompt and book bible. Follow the 'No Hallucination' rule strictly. After drafting, perform a self-review against the checklist in `pipeline/templates/self_review_template.md`. Save the draft to `books/<book-name>/chapters/ch{{number}}_draft.md`."
-    *   **Commit:** Run `git add -A && git commit -m "Draft chapter {{number}}"` after each successful draft.
+### Phase Execution Notes (Dispatcher Handles This)
 
-### Phase 2b: Review Gate (Human Intervention)
+The dispatcher manages execution automatically via parent-child links. No manual intervention needed between phases unless human review is triggered.
 
-**Goal:** Human review of flagged chapters before proceeding.
-
-1.  **Compile Report:** Check all drafts in `books/<book-name>/chapters/`. Identify any that were marked as "needs_review" during self-review or show obvious quality issues.
-2.  **Send to User:** Send a summary via Telegram:
-    > "**Booksmith Review Gate**\nTotal Chapters: {{total}}\nApproved: {{approved}}\nFlagged: {{flagged}}\n\nIssues:\n- Ch X: [Issue description]\n..."
-3.  **Wait:** Pause execution for up to 3 days waiting for user feedback.
-4.  **Handle Feedback:**
-    *   If user provides specific fixes, delegate revision tasks to `booksmith-author`.
-    *   If no response after 3 days, auto-fix all flagged chapters using `booksmith-author`.
-
-### Phase 3: Manuscript Review (Delegated)
-
-**Goal:** Full manuscript review for macro-level issues.
-
-1.  **Load Context:** Read the full assembled text (all chapters).
-2.  **Delegate to Author:** Use `delegate_task` with `booksmith-author`:
-    > "Review the complete manuscript in `books/<book-name>/chapters/`. Check for pacing, cross-chapter continuity, and redundancy. Save notes to `books/<book-name>/review/manuscript_review.md`."
-
-### Phase 4: Logues Writing (Delegated)
-
-**Goal:** Write supplementary material (Foreword, Intro, etc.).
-
-1.  **Check Config:** Read `config.yaml` to see which logues are enabled (`logues_included`).
-2.  **Delegate to Author:** For each enabled logue type:
-    > "Write the {{logue_type}} for this book based on the manuscript and bible. Save to `books/<book-name>/logues/{{logue_type}}.md`."
-
-### Phase 5: Finalizing (Direct Execution)
-
-**Goal:** Stitch everything into a final manuscript.
-
-1.  **Assemble:** Read all files in order:
-    *   Logues (alphabetical)
-    *   Chapters (numerical)
-2.  **Add Front Matter:** Prepend Title Page and Copyright Notice.
-3.  **Save:** Write the result to `books/<book-name>/manuscript/final_manuscript.md`.
-4.  **Final Commit:** Run `git add -A && git commit -m "Final manuscript assembled"` and push to remote.
+**Phase 2 Review Gate:** If the drafting task blocks itself with flagged chapters, it calls `kanban_block()` with a summary of issues. The user provides feedback via `/unblock <task_id>`. The worker resumes and revises based on feedback.
 
 ## Templates Reference
 
-All templates are located in `pipeline/templates/`:
+All templates are located in `templates/` (project root):
 *   `book_bible_template.md`
 *   `chapter_prompt_template.md`
 *   `self_review_template.md`
 *   `manuscript_review_template.md`
 *   `logues_template.md`
 
+## Test Runs
+
+Before committing to frontier model costs (~$55-70/book), validate the pipeline with local models and shorter reports. See `references/test-run-strategy.md`.
+
+## Kanban Reference
+
+For detailed task graph structure, review gate patterns, and pitfall avoidance, see `references/kanban-patterns.md`.
+
 ## Error Handling
 
 *   **Git Failures:** If push fails, check if the remote is configured correctly.
-*   **Missing Reports:** Verify `books/<book-name>/reports/` exists before starting Phase 1.
-*   **Profile Errors:** If a delegation fails, retry once with a clearer instruction or simplified context.
+*   **Missing Reports:** Verify 5 markdown files in reports/ before creating Kanban tasks.
+*   **Profile Errors:** If a task fails, check the gateway is running for that profile and retry with clearer instructions.
+*   **Kanban Task Stuck:** If a task stays in `todo` too long, verify parent completed successfully and gateway is active. Use `hermes kanban show <task_id>` to inspect.
+*   **Unknown Assignee:** The dispatcher silently drops tasks assigned to non-existent profiles. Always assign to `booksmith-planner`, `booksmith-author`, or `default`.
