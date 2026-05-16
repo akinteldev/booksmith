@@ -1,4 +1,7 @@
-# Book Bible — {{book_title}}
+# Book Bible
+
+**Title:** {{book_title}}
+**Subtitle:** {{book_subtitle}}
 
 ## Overview
 {{brief_description}}
