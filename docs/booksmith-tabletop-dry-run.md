@@ -212,15 +212,34 @@ Commits Phase 1 output:
 Phase 1: Plan the-ransomware-factory
 ```
 
-Marks Phase 1 done.
+Blocks Phase 1 for human planning approval before drafting can start.
+
+**Hermes tells you:**
+
+```text
+Planning complete.
+
+Review:
+- books/the-ransomware-factory/planning/book_bible.md
+- books/the-ransomware-factory/planning/chapter_prompts/
+
+Check title/subtitle, thesis, chapter sequence, Report Mapping, and Required Source Files.
+Approve or provide corrections, then unblock this task.
+```
 
 **You do:**
 
-Nothing unless the task fails.
+Review the planning output. If it is acceptable, unblock the planning task:
+
+```text
+/unblock <planning_task_id> approved
+```
+
+If it needs changes, provide concise corrections and then unblock the task. The planner applies corrections, commits them, and only then marks Phase 1 done.
 
 ## Phase 2 — Drafting
 
-### T+1–2 hours — Drafting starts
+### T+1–2 hours — Drafting starts after planning approval
 
 **Hermes does:**
 

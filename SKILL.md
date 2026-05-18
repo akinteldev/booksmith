@@ -25,12 +25,12 @@ This skill orchestrates the end-to-end creation of a cybersecurity non-fiction b
 The pipeline uses a Kanban board with parent-child task linking to enforce sequential execution:
 
 ```
-T1: Planning → T2: Drafting + Review Gate → T3: Manuscript Review → T4: Logues Writing → T5: Finalizing
+T1: Planning + Human Approval Gate → T2: Drafting + Review Gate → T3: Manuscript Review → T4: Logues Writing → T5: Finalizing
 ```
 
 - Tasks are created upfront in Phase 0 with proper parent links.
 - The dispatcher auto-promotes child tasks when parents complete (polls every ~60s).
-- Human-in-the-loop is handled via `kanban_block()` at the review gate — the task blocks itself, user provides feedback via `/unblock`, then execution resumes.
+- Human-in-the-loop is handled via `kanban_block()` at review gates — the task blocks itself, user provides feedback via `/unblock`, then execution resumes.
 - All task execution is visible on the Kanban board dashboard.
 
 **Task creation method:** Use the Python API (`kanban_create()`) for parent-child linking. If unavailable, fall back to CLI: `hermes kanban --board booksmith create "Title" --body "Body" --assignee profile`.
@@ -93,7 +93,13 @@ IMPORTANT FORMATTING RULES:
 Save output to books/{book_name}/planning/.
 
 After saving, commit this phase output:
-`git add books/{book_name}/planning && git commit -m "Phase 1: Plan {book_name}"`""",
+`git add books/{book_name}/planning && git commit -m "Phase 1: Plan {book_name}"`
+
+MANDATORY HUMAN PLANNING REVIEW GATE: After committing Phase 1 output, block this task with `kanban_block()` and ask the user to review:
+- `books/{book_name}/planning/book_bible.md`
+- `books/{book_name}/planning/chapter_prompts/`
+
+The block message must ask the user to check title/subtitle, thesis, chapter sequence, Report Mapping, and per-chapter Required Source Files. Do not mark Phase 1 complete and do not allow Phase 2 drafting to start until the user provides approval or corrections and unblocks the task with `/unblock <task_id>`. If corrections are provided on unblock, apply them to the planning files, commit the corrections, then complete Phase 1.""",
 )[task_id]
 
 t2 = kanban_create(
@@ -186,7 +192,9 @@ After push succeeds, send a Telegram completion notification to the user contain
 
 ### Phase Execution Notes (Dispatcher Handles This)
 
-The dispatcher manages execution automatically via parent-child links. No manual intervention needed between phases unless human review is triggered.
+The dispatcher manages execution automatically via parent-child links. Phase 2 must not start until the mandatory Phase 1 planning review gate is unblocked and Phase 1 is completed.
+
+**Phase 1 Planning Review Gate:** Phase 1 must block after generating and committing the Book Bible and chapter prompts. The user reviews the plan and source routing, then approves or provides corrections via `/unblock <task_id>`. Only after approval/correction should Phase 1 complete and promote Phase 2.
 
 **Phase 2 Review Gate:** Phase 2 must self-review each chapter and perform one automatic revision pass for all fixable issues. Only if critical or unresolved issues remain after that revision should it call `kanban_block()` with a concise issue summary. The user provides feedback via `/unblock <task_id>`, then the worker resumes and revises based on that feedback.
 

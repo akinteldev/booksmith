@@ -17,7 +17,7 @@ The pipeline is managed by a **Hermes Skill** that orchestrates work through a *
 
 ```
 You invoke skill → Phase 0 creates directory + queues all Kanban tasks → 
-Dispatcher picks up T1 (planner) → completes → auto-promotes T2 (author) → 
+Dispatcher picks up T1 (planner) → blocks for planning approval → you unblock → auto-promotes T2 (author) → 
 Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 execute automatically
 ```
 
@@ -45,7 +45,7 @@ Before running the pipeline:
 
 | Task | Title | Assignee | Description |
 |------|-------|----------|-------------|
-| T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts with per-chapter Required Source Files |
+| T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts with per-chapter Required Source Files, then block for human approval |
 | T2 | Phase 2: Drafting | booksmith-author | Serial chapter drafts from required source files, with source-use notes and self-review. Blocks if chapters need human review. |
 | T3 | Phase 3: Manuscript Review | booksmith-author | Full manuscript review for pacing, continuity, redundancy |
 | T4 | Phase 4: Logues Writing | booksmith-author | Foreword, intro, epilogue, glossary (configurable) |
@@ -53,6 +53,7 @@ Before running the pipeline:
 
 **Human intervention points:**
 - **Phase 0:** You place your 5 research reports in the created `reports/` folder and reply "ready"
+- **Phase 1 Review Gate:** You review the Book Bible, chapter prompts, chapter sequence, report mapping, and Required Source Files before drafting begins. Approve or provide corrections, then unblock with `/unblock <task_id>`.
 - **Phase 2b (Review Gate):** If chapters are flagged during self-review, Phase 2 blocks itself. You review via Telegram and unblock with `/unblock <task_id>` after providing feedback. Timeout: 3 days → auto-fixes applied if no response.
 
 ## Models Used
