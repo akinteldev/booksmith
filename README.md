@@ -1,6 +1,8 @@
 # Booksmith — Automated Book Pipeline
 
-Start here: [Booksmith Tabletop Dry Run](docs/booksmith-tabletop-dry-run.md) — a timeline of what you do, what Hermes does, and what the model does.
+Start here:
+- [Booksmith Hands-On Operator Guide](docs/booksmith-hands-on-operator-guide.md) — how to invoke, monitor, approve, pause, and intervene during real runs.
+- [Booksmith Tabletop Dry Run](docs/booksmith-tabletop-dry-run.md) — a timeline of what you do, what Hermes does, and what the model does.
 
 ## Overview
 
