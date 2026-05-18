@@ -27,7 +27,15 @@ You are reviewing a drafted chapter against its source materials and the Book Bi
 - [ ] Hypothetical vignettes illustrate only attack vectors or dynamics present in the reports.
 - **Issues:** {{list any accuracy concerns}}
 
-### 4. Production Formatting Rules
+### 4. Source Routing Check
+- [ ] The chapter prompt listed exact Required Source Files.
+- [ ] Those exact files were read before drafting.
+- [ ] No unlisted report was used unless explicitly justified by the Book Bible or chapter prompt.
+- [ ] Factual claims are supported by the listed source files.
+- [ ] A source-use sidecar note was saved for this chapter listing files read and main facts used.
+- **Issues:** {{list any source routing problems}}
+
+### 5. Production Formatting Rules
 - [ ] Chapter uses only one heading: `# Chapter N: Title`.
 - [ ] No `##` or `###` subheadings appear in the chapter body.
 - [ ] No horizontal rules appear anywhere in the chapter.
@@ -38,7 +46,7 @@ You are reviewing a drafted chapter against its source materials and the Book Bi
 - [ ] Paragraph spacing is clean: no triple blank lines or decorative separators.
 - **Issues:** {{list any formatting violations}}
 
-### 5. Structure, Flow, and Style
+### 6. Structure, Flow, and Style
 - [ ] Logical progression within the chapter.
 - [ ] Smooth transitions between major ideas without mechanical section labels.
 - [ ] Opening creates earned narrative interest; closing provides closure or propulsion.
@@ -47,7 +55,7 @@ You are reviewing a drafted chapter against its source materials and the Book Bi
 - [ ] Prose avoids hype, cyber-war clichés, moral grandstanding, detached analyst prose, and techno-thriller melodrama.
 - **Issues:** {{list any structural or style problems}}
 
-### 6. Length and Depth
+### 7. Length and Depth
 - [ ] Word count is within target range: {{word_range}} words.
 - [ ] Depth of coverage matches the chapter's importance in the book arc.
 - [ ] No major section feels padded, thin, repetitive, or redundant with another chapter.

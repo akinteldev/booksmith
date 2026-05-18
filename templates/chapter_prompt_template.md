@@ -25,6 +25,14 @@
 Primary sources for this chapter:
 - **Report #{{report_numbers}}:** {{relevant_sections_summary}}
 
+## Required Source Files
+
+Before drafting, read only these exact source files:
+- `books/{{book_name}}/reports/{{source_file_1}}`
+- `books/{{book_name}}/reports/{{source_file_2}}`
+
+Do not draft this chapter until these files have been read. Do not use reports not listed here unless the Book Bible explicitly requires it.
+
 Key data points, quotes, or findings to incorporate:
 - {{specific_data_or_quotes}}
 

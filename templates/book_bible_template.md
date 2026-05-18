@@ -45,13 +45,12 @@ Use technical metaphors only when they improve clarity. Translate complex system
 Every technical concept must land in the reader's mind as something they can *see*, *touch*, and *feel*.
 
 ### Pacing: Narrative Momentum Without Melodrama
-Maintain investigative momentum without turning the book into a techno-thriller. The prose should move with pressure, consequence, and curiosity, not manufactured cliffhangers.
+The book should have the driving momentum of a techno-thriller without becoming melodramatic or manufacturing cliffhangers. Each chapter opens with a concrete human scene — a vignette grounded in a specific documented mechanic — before widening into the institutional and technical forces behind it. Use short, punchy paragraphs during scenes of discovery or exploitation; longer, architectural paragraphs when mapping the systemic picture. Chapters end on revelation, not summary: the reader should turn the page because they have just learned something that changes what they thought was true.
 
 *   Ground every scene in the serious reality of modern cybercrime and institutional fragility.
 *   Build tension by showing scale, speed, incentives, and consequences.
 *   Treat digital actions as real-world events with operational, financial, and human effects.
-*   Use short, direct sentences for impact; longer, flowing prose for context and atmosphere.
-*   End sections with earned narrative propulsion, not artificial hooks.
+*   End sections with earned revelation, not artificial hooks.
 
 ### The "So What?" Factor
 Always connect dense technical data back to the reader's everyday life. Show exactly how these invisible digital shifts threaten:
@@ -85,10 +84,10 @@ The vignette is your bridge between data and empathy. It must:
 {{part_breakdown}}
 
 ### Chapter Sequence & Arc
-| # | Title | Subtitle | Core Question | Key Sources |
-|---|-------|----------|---------------|-------------|
-| 1 | {{ch1_title}} | {{ch1_subtitle}} | {{ch1_question}} | Report #X, #Y |
-| 2 | {{ch2_title}} | {{ch2_subtitle}} | {{ch2_question}} | Report #X, #Y |
+| # | Title | Subtitle | Core Question | Key Sources | Required Source Files |
+|---|-------|----------|---------------|-------------|-----------------------|
+| 1 | {{ch1_title}} | {{ch1_subtitle}} | {{ch1_question}} | Report #X, #Y | books/{{book_name}}/reports/{{exact_report_filename_x}}; books/{{book_name}}/reports/{{exact_report_filename_y}} |
+| 2 | {{ch2_title}} | {{ch2_subtitle}} | {{ch2_question}} | Report #X, #Y | books/{{book_name}}/reports/{{exact_report_filename_x}}; books/{{book_name}}/reports/{{exact_report_filename_y}} |
 | ... |
 
 ## Continuity Rules

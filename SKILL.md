@@ -81,6 +81,8 @@ t1 = kanban_create(
 
 CRITICAL: At the top of the Book Bible, include an explicit 'Report Mapping' section that lists each report number (1-5) alongside its exact filename, source authorities, and core topic. This crosswalk prevents confusion in later phases about which report covers what subject matter.
 
+For every chapter in the Book Bible's Chapter Sequence & Arc and in every chapter prompt, include exact repo-relative Required Source Files for that chapter (for example: `books/{book_name}/reports/<exact_filename>.md`). Do not list all five reports by default. Select only the reports directly needed for that chapter, while preserving enough source grounding for high-quality drafting.
+
 Derive both a **Title** and a **Subtitle** for the book from the reports. The title should be punchy and memorable; the subtitle should clarify the book's scope (e.g., "How Cybercriminal Organizations Became the Internet's Most Efficient Enterprise"). Populate both fields in the Book Bible header.
 
 IMPORTANT FORMATTING RULES:
@@ -97,7 +99,9 @@ After saving, commit this phase output:
 t2 = kanban_create(
     title="Phase 2: Drafting - Serial Chapter Generation & Self-Review",
     assignee="booksmith-author",
-    body=f"""Draft all chapters serially from prompts in books/{book_name}/planning/chapter_prompts/. For each chapter: read the prompt + book bible, draft the chapter, self-review against templates/self_review_template.md, then automatically revise once to fix all issues found by the self-review before moving to the next chapter. Save drafts and self-review notes to books/{book_name}/chapters/.
+    body=f"""Draft all chapters serially from prompts in books/{book_name}/planning/chapter_prompts/. For each chapter: read the prompt + book bible, extract the Required Source Files list from the chapter prompt, read those exact report files before drafting, draft the chapter, save a brief source-use sidecar note listing files read and main facts used, self-review against templates/self_review_template.md, then automatically revise once to fix all issues found by the self-review before moving to the next chapter. Save drafts, source-use notes, and self-review notes to books/{book_name}/chapters/.
+
+Do not use unrelated reports for a chapter unless the Book Bible or chapter prompt explicitly requires them. The source-use sidecar should make routing auditable by listing the exact files read and the main facts used from each file.
 
 COMPREHENSIVE OUTPUT FORMATTING RULES (apply to ALL chapters and logues):
 - ONLY `# Chapter N: Title` as headings — NO `##`, `###`, or any subheadings within chapter text. Subheadings bloat the Kindle TOC and break clean reading flow.
