@@ -9,11 +9,19 @@ You are writing supplementary material for a book based on five research reports
 ### Purpose of This Piece
 {{purpose_description}}
 
-- Foreword: Establish credibility and stakes. Short, authoritative, and contextual. Do not summarize the full book.
-- Introduction: State the central thesis, explain why the reader should care, and preview the journey without duplicating the Foreword or Prologue.
-- Prologue: Open with a scene or narrative hook grounded in the source material or a clearly hypothetical vignette that illustrates documented dynamics.
+- Foreword: Briefly explain the research basis for the book: five supporting research reports, built from cited public/technical sources. Mention that the reports are open-sourced at https://github.com/akinteldev/research so readers can inspect the basis for the claims. Keep it sober, short, and not promotional.
+- Introduction: Introduce the conceptual “cast” of the book before the narrative begins: the systems, incentives, institutions, markets, actors, or mechanisms that will recur throughout the story. Do not summarize the whole book.
+- Prologue: Open with a scene or narrative hook grounded in the source material or a clearly hypothetical vignette that shows the book’s machinery in motion.
 - Epilogue: Provide closure and look forward. Do not introduce major new evidence.
 - Glossary: Define key terms concisely as back matter. Use plain language; do not write essay-length entries.
+
+### Maximum Lengths
+
+- Foreword: 900 words maximum.
+- Introduction: 1,500 words maximum.
+- Prologue: 1,500 words maximum.
+- Epilogue: 1,200 words maximum.
+- Glossary: 2,000 words maximum.
 
 ### Required Content
 {{specific_requirements_for_this_logue}}
@@ -30,6 +38,7 @@ Match the Book Bible's voice guidelines exactly: veteran investigative journalis
 - Do not add an italic subtitle under the title.
 - Do not use horizontal rules or decorative separators.
 - Do not use citation markers, footnotes, or bibliography-style references.
+- Foreword should avoid first person and grand credibility claims; the point is transparency, not self-promotion.
 - Use italics rarely and only for genuine emphasis.
 - Do not use bold body prose.
 
