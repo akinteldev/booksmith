@@ -5,7 +5,7 @@
 Booksmith is a fully automated book creation pipeline that transforms five comprehensive research reports into a polished manuscript. The pipeline handles planning, drafting, review, supplementary writing, and final assembly — with human intervention only at the chapter quality gate.
 
 **Domain:** Cybersecurity Non-Fiction (Narrative Style)
-**Author Voice:** Elite investigative journalist ("Information, not ammunition")
+**Author Voice:** Veteran investigative journalist ("Information, not ammunition"; calm alarm, translation over sensationalism)
 
 ## Architecture
 

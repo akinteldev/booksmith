@@ -22,11 +22,18 @@ Five research reports ground this book's factual foundation:
 
 ## Style & Voice Guidelines
 
-### Tone: Urgent and Chilling
-Establish a tone that is dramatically urgent, chilling, and deeply authoritative. Write with the gravity of an existential warning. Be direct. Be unflinching. Never sensationalize beyond what the facts warrant, but never soften them either.
+### Author Voice
+
+**Core principle:** Information, not ammunition.
+
+The book is written in the voice of a veteran investigative journalist: authoritative but not omniscient, urgent but not hysterical, deeply informed but committed to translation. The narrator writes close to the action, not from a distant academic perch, but never becomes the subject. The narrator is the lens.
+
+The stance is calm alarm. The writer has spent years inside the rooms where these systems are built, defended, monetized, and misunderstood, and has lost the ability to be reassured by official answers. The prose should feel like Andy Greenberg in the server farm, Michael Lewis in the trading pit, and Patrick Radden Keefe in the boardroom: someone who has seen the fragile machinery behind the curtain and is now explaining why it matters.
+
+The voice should translate technical systems into human consequences without sensationalism. No hype, no cyber-war clichés, no moral grandstanding, no detached analyst prose. The goal is narrative clarity: make the machinery visible, make the stakes legible, and let the facts create the alarm.
 
 ### Cybersecurity for Everyone (The Metaphor Rule)
-Never use a technical acronym without immediately translating it into a brilliant, everyday metaphor. Make the invisible digital world feel physical, tangible, and fragile.
+Use technical metaphors only when they improve clarity. Translate complex systems into everyday physical analogies, but avoid forced cleverness or repeated metaphor stacking. Make the invisible digital world feel physical, tangible, and fragile.
 
 - Cloud architecture = a physical office building with floors, security checkpoints, and master keys
 - Digital tokens / session cookies = hotel keycards that grant access to specific rooms for a limited time
@@ -42,14 +49,14 @@ Never use a technical acronym without immediately translating it into a brillian
 
 Every technical concept must land in the reader's mind as something they can see, touch, and feel.
 
-### Pacing: The Techno-Thriller
-Maintain the driving, relentless momentum of a high-stakes thriller. Every sentence should pull the reader forward.
+### Pacing: Narrative Momentum Without Melodrama
+Maintain investigative momentum without turning the book into a techno-thriller. The prose should move with pressure, consequence, and curiosity, not manufactured cliffhangers.
 
-- Ground every scene in the cold, serious reality of modern cyber warfare.
-- Build suspense by emphasizing scale, speed, and severe consequences.
-- Treat every digital action with the gravity of a physical break-in.
-- Use short, punchy sentences for impact. Longer, flowing prose for context and atmosphere.
-- End sections on hooks that demand the reader continue.
+- Ground every scene in the serious reality of modern cybercrime and institutional fragility.
+- Build tension by showing scale, speed, incentives, and consequences.
+- Treat digital actions as real-world events with operational, financial, and human effects.
+- Use short, direct sentences for impact; longer, flowing prose for context and atmosphere.
+- End sections with earned narrative propulsion, not artificial hooks.
 
 ### The "So What?" Factor
 Always connect dense technical data back to the reader's everyday life. Show exactly how these invisible digital shifts threaten:

@@ -11,7 +11,7 @@ category: productivity
 This skill orchestrates the end-to-end creation of a cybersecurity non-fiction book from five research reports. It uses a **Kanban board** for task management — all work is queued as linked tasks that execute sequentially via the dispatcher, giving full visibility into every phase.
 
 **Domain:** Cybersecurity Non-Fiction (Narrative Style)
-**Author Voice:** Elite investigative journalist ("Information, not ammunition")
+**Author Voice:** Veteran investigative journalist ("Information, not ammunition"; calm alarm, translation over sensationalism)
 
 ## Prerequisites
 
