@@ -3,8 +3,8 @@
 * **Title:** {{book_title}}
 * **Subtitle:** {{book_subtitle}}
 
-## Overview
-{{brief_description}}
+## Core Thesis (One Paragraph)
+{{core_thesis}}
 
 ## Source Material Summary
 {{summary_of_five_reports}}
