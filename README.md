@@ -1,5 +1,7 @@
 # Booksmith — Automated Book Pipeline
 
+Start here: [Booksmith Tabletop Dry Run](docs/booksmith-tabletop-dry-run.md) — a timeline of what you do, what Hermes does, and what the model does.
+
 ## Overview
 
 Booksmith is a fully automated book creation pipeline that transforms five comprehensive research reports into a polished manuscript. The pipeline handles planning, drafting, review, supplementary writing, and final assembly — with human intervention only at the chapter quality gate.
