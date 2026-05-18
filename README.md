@@ -45,8 +45,8 @@ Before running the pipeline:
 
 | Task | Title | Assignee | Description |
 |------|-------|----------|-------------|
-| T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts |
-| T2 | Phase 2: Drafting | booksmith-author | Serial chapter drafts with self-review. Blocks if chapters need human review. |
+| T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts with per-chapter Required Source Files |
+| T2 | Phase 2: Drafting | booksmith-author | Serial chapter drafts from required source files, with source-use notes and self-review. Blocks if chapters need human review. |
 | T3 | Phase 3: Manuscript Review | booksmith-author | Full manuscript review for pacing, continuity, redundancy |
 | T4 | Phase 4: Logues Writing | booksmith-author | Foreword, intro, epilogue, glossary (configurable) |
 | T5 | Phase 5: Finalizing | default | Stitch all parts into final manuscript, commit & push |
@@ -88,7 +88,7 @@ booksmith/                          ← project root (git-tracked)
 │   └── <book-name>/                ← each book's working directory
 │       ├── reports/                ← Your 5 research reports go here
 │       ├── planning/               ← Phase 1 output (bible, prompts)
-│       ├── chapters/               ← Phase 2 output (drafted chapters)
+│       ├── chapters/               ← Phase 2 output (drafts, source-use notes, self-reviews)
 │       ├── review/                 ← Phase 3 output (manuscript review)
 │       ├── logues/                 ← Phase 4 output (foreword, intro, etc.)
 │       └── manuscript/             ← Phase 5 output (final stitched book)
@@ -151,7 +151,7 @@ The entire `booksmith/` directory is a single git repository (monorepo). Each bo
 
 Per-book commits are made during pipeline execution:
 - Phase 0: "Initialize book directory"
-- Phase 2: One commit per drafted chapter ("Draft chapter X")
+- Phase 2: One commit after all chapters are drafted and reviewed ("Phase 2: Draft chapters for <book-name>")
 - Phase 5: "Final manuscript assembled" + push to remote
 
 ## Troubleshooting

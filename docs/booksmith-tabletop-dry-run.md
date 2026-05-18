@@ -166,6 +166,7 @@ Passes it:
 - the chapter prompt template
 - the formatting rules
 - the requirement to create a report mapping
+- the requirement to assign exact Required Source Files per chapter
 
 **Planner model does:**
 
@@ -183,6 +184,14 @@ books/the-ransomware-factory/planning/chapter_02_the_affiliate.md
 books/the-ransomware-factory/planning/chapter_03_the_broker.md
 ```
 
+Each chapter prompt includes exact repo-relative source paths for that chapter, for example:
+
+```text
+Required Source Files:
+- books/the-ransomware-factory/reports/report_1_ransomware_economics.md
+- books/the-ransomware-factory/reports/report_3_affiliate_operations.md
+```
+
 The Book Bible includes:
 
 - title
@@ -192,6 +201,7 @@ The Book Bible includes:
 - structure
 - chapter list
 - source/report mapping
+- per-chapter Required Source Files
 - continuity rules
 
 **Hermes does after model finishes:**
@@ -235,15 +245,20 @@ For each chapter:
 
 1. Reads the Book Bible.
 2. Reads the chapter prompt.
-3. Drafts the chapter.
-4. Self-reviews it.
-5. Revises once automatically.
-6. Saves the final chapter.
+3. Extracts the Required Source Files list.
+4. Reads only those exact report files unless the Book Bible or prompt explicitly requires another report.
+5. Drafts the chapter.
+6. Saves a source-use sidecar note listing files read and main facts used.
+7. Self-reviews it, including the source-routing checklist.
+8. Revises once automatically.
+9. Saves the final chapter.
 
 Example output:
 
 ```text
 books/the-ransomware-factory/chapters/chapter_01_the_business.md
+books/the-ransomware-factory/chapters/chapter_01_the_business.sources.md
+books/the-ransomware-factory/chapters/chapter_01_the_business.self_review.md
 books/the-ransomware-factory/chapters/chapter_02_the_affiliate.md
 books/the-ransomware-factory/chapters/chapter_03_the_broker.md
 ```
@@ -492,8 +507,9 @@ Warnings:
 
 - Reads reports.
 - Creates Book Bible.
-- Creates chapter prompts.
+- Creates chapter prompts with Required Source Files.
 - Drafts chapters.
+- Saves source-use notes.
 - Self-reviews and revises.
 - Reviews manuscript.
 - Writes logues.
