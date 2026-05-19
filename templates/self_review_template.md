@@ -55,11 +55,11 @@ You are reviewing a drafted chapter against its source materials and the Book Bi
 - [ ] Prose avoids hype, cyber-war clichés, moral grandstanding, detached analyst prose, and techno-thriller melodrama.
 - **Issues:** {{list any structural or style problems}}
 
-### 7. Length and Depth
-- [ ] Word count is within target range: {{word_range}} words.
-- [ ] Depth of coverage matches the chapter's importance in the book arc.
-- [ ] No major section feels padded, thin, repetitive, or redundant with another chapter.
-- **Issues:** {{note if too short/long or shallow/deep}}
+### 7. Depth and Proportion
+- [ ] The chapter covers required material with enough depth for its role in the book.
+- [ ] No section feels thin, padded, repetitive, or artificially expanded.
+- [ ] The chapter stops at a natural editorial endpoint.
+- **Issues:** {{note substantive depth, pacing, or proportion problems only; do not treat word count itself as an issue}}
 
 ## Revision Pass
 

@@ -57,5 +57,5 @@ Key data points, quotes, or findings to incorporate:
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly
-- Target length: {{word_range}} words
+- Aim for approximately {{word_target}} words. Let the chapter's source depth, narrative function, and natural stopping point determine the final length. Do not pad, repeat, or invent material to reach a number.
 - Maintain consistent POV and tense throughout
