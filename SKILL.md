@@ -207,11 +207,19 @@ All templates are located in `templates/` (project root):
 *   `manuscript_review_template.md`
 *   `logues_template.md`
 
+**Template editing preference:** Keep Booksmith template changes concise and directional. Do not over-specify long requirements when a short prompt gives the drafting model enough room to work. For proposed prompt/template edits, show the concise patch first and wait for approval unless the user explicitly asks to apply it.
+
+**Documentation sync rule:** When changing pipeline behavior in `SKILL.md` or any `templates/*.md`, immediately check whether `README.md` and `docs/booksmith-tabletop-dry-run.md` describe the affected phase/output. Update them in the same work session when behavior changes, especially for Phase 1 planning outputs, Phase 2 drafting/self-review behavior, source-routing requirements, sidecar artifacts, commit semantics, or human intervention points.
+
 ## Test Runs
 
 Before committing to frontier model costs (~$55-70/book), validate the pipeline with local models and shorter reports. See `references/test-run-strategy.md`.
 
 For known pitfalls discovered during test runs (separator issues, assembly order, report mapping), see `references/test-run-pitfalls.md`.
+
+For token-cost control, production cost gates, prompt-caching cautions, and context-reduction strategy, see `references/token-cost-control.md` and `references/cost_estimation.md`.
+
+For production hardening requirements discovered during real pipeline preparation (phase commits, no-overwrite safety, preflight validation, auto-revision-before-blocking, final notification, and explicit glossary ordering), see `references/production-hardening.md`.
 
 ## Kanban Reference
 

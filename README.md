@@ -6,7 +6,7 @@ Start here:
 
 ## Overview
 
-Booksmith is a fully automated book creation pipeline that transforms five comprehensive research reports into a polished manuscript. The pipeline handles planning, drafting, review, supplementary writing, and final assembly — with human intervention only at the chapter quality gate.
+Booksmith is a fully automated book creation pipeline that transforms five comprehensive research reports into a polished manuscript. The pipeline handles planning, drafting, review, supplementary writing, and final assembly — with mandatory human approval after planning, then intervention only if chapter self-review finds unresolved critical issues.
 
 **Domain:** Cybersecurity Non-Fiction (Narrative Style)
 **Author Voice:** Veteran investigative journalist ("Information, not ammunition"; calm alarm, translation over sensationalism)
@@ -26,7 +26,7 @@ Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 exe
 **Key principles:**
 - **Kanban-driven, not hidden delegation.** Every phase is a visible task on the board. No invisible `delegate_task` calls — you can see exactly what's running, stuck, or done at any time.
 - **Parent-child linking enforces sequence.** T2 waits for T1 to complete; T3 waits for T2; and so on. The dispatcher auto-promotes children when parents finish (polls every ~60s).
-- **Human-in-the-loop via blocking.** At the review gate, Phase 2 calls `kanban_block()` with flagged chapters. You provide feedback via `/unblock <task_id>` and execution resumes.
+- **Human-in-the-loop via blocking.** Phase 1 blocks for mandatory planning approval. Phase 2 only blocks if self-review leaves unresolved critical issues after one automatic revision pass. You provide feedback via `/unblock <task_id>` and execution resumes.
 
 ### Prerequisites
 
