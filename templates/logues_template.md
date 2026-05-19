@@ -15,13 +15,14 @@ You are writing supplementary material for a book based on five research reports
 - Epilogue: Provide closure and look forward. Do not introduce major new evidence.
 - Glossary: Define key terms concisely as back matter. Use plain language; do not write essay-length entries.
 
-### Maximum Lengths
+### Length Guidance
 
-- Foreword: aim for 900 words.
-- Introduction: aim for 1,500 words.
-- Prologue: aim for 1,500 words.
-- Epilogue: aim for 1,200 words.
-- Glossary: aim for 2,000 words.
+- Foreword: aim for about 900 words.
+- Introduction: aim for about 1,500 words.
+- Prologue: aim for about 1,500 words.
+- Epilogue: aim for about 1,200 words.
+- Glossary: aim for about 2,000 words.
+- Let purpose and editorial completeness determine final length. Do not pad, repeat, or invent material to reach a number.
 
 ### Required Content
 {{specific_requirements_for_this_logue}}
@@ -41,9 +42,6 @@ Match the Book Bible's voice guidelines exactly: veteran investigative journalis
 - Foreword should avoid first person and grand credibility claims; the point is transparency, not self-promotion.
 - Use italics rarely and only for genuine emphasis.
 - Do not use bold body prose.
-
-### Length Target
-{{word_range}} words
 
 ### References
 - Book Bible: /planning/book_bible.md

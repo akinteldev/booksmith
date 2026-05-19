@@ -78,7 +78,6 @@ The vignette is your bridge between data and empathy. It must:
 ## Structural Blueprint
 
 ### Total Chapters: {{chapter_count}}
-### Target Chapter Length: {{word_range}} words
 
 ### Part Structure (if applicable)
 {{part_breakdown}}
