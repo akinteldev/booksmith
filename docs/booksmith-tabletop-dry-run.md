@@ -156,7 +156,7 @@ Still waiting. The dispatcher will call the right model profile when each task b
 Assigns Phase 1 to:
 
 ```text
-booksmith-planner
+booksmith-creator
 ```
 
 Passes it:
@@ -246,7 +246,7 @@ If it needs changes, provide concise corrections and then unblock the task. The 
 Assigns Phase 2 to:
 
 ```text
-booksmith-author
+booksmith-creator
 ```
 
 Passes it:
@@ -334,7 +334,7 @@ Resumes, revises the affected material, and continues.
 Assigns Phase 3 to:
 
 ```text
-booksmith-author
+booksmith-creator
 ```
 
 Passes it the drafted chapters.
@@ -380,7 +380,7 @@ Usually nothing.
 Assigns Phase 4 to:
 
 ```text
-booksmith-author
+booksmith-creator
 ```
 
 Passes it:

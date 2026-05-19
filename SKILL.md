@@ -17,8 +17,8 @@ This skill orchestrates the end-to-end creation of a cybersecurity non-fiction b
 
 1.  **Git Repository:** The `booksmith/` directory must be a git repo with a remote configured (`origin`).
 2.  **Hermes Profiles:** Two profiles must exist:
-    *   `booksmith-planner`: Uses Sonnet 4.6 for structural planning.
-    *   `booksmith-author`: Uses Opus 4.7 for drafting/logues and Sonnet 4.6 for review (or Sonnet 4.6 for all phases during test runs to reduce costs).
+    *   `booksmith-creator`: High-quality generative profile for Phase 1 planning, Phase 2 drafting, and Phase 4 logues (Opus/frontier model by default).
+    *   `booksmith-reviewer`: Analytical review profile for Phase 3 manuscript review (Sonnet/strong reviewer model by default).
 
 ## Kanban Architecture
 
@@ -33,7 +33,7 @@ T1: Planning + Human Approval Gate → T2: Drafting + Review Gate → T3: Manusc
 - Human-in-the-loop is handled via `kanban_block()` at review gates — the task blocks itself, user provides feedback via `/unblock`, then execution resumes.
 - All task execution is visible on the Kanban board dashboard.
 
-**Task creation method:** Use the Python API (`kanban_create()`) for parent-child linking. If unavailable, fall back to CLI: `hermes kanban --board booksmith create "Title" --body "Body" --assignee profile`.
+**Task creation method:** Use the Python API (`kanban_create()`) for parent-child linking. If unavailable, fall back to CLI: `hermes kanban --board booksmith create "Title" --body "Body" --assignee profile --parent <parent_id> --workspace dir:/home/emkay/projects/booksmith --skill booksmith`. For production runs, prefer `dir:/home/emkay/projects/booksmith` over scratch workspaces so workers read/write the real monorepo directly and phase commits land in the intended Git repo.
 
 ## Workflow Phases
 
@@ -66,17 +66,23 @@ T1: Planning + Human Approval Gate → T2: Drafting + Review Gate → T3: Manusc
     * each report has meaningful length (flag suspiciously short reports)
     * filenames and extracted titles are recorded for the Book Bible Report Mapping
     If validation fails, STOP and report the exact issue to the user before proceeding.
-9.  **Archive Old Tasks:** Archive ALL existing tasks on the `booksmith` board from previous runs (not just completed ones — blocked and todo tasks also need clearing):
+9.  **Commit and Push Source Inputs Before Queuing:** After reports validate, commit the production inputs before any worker can start:
+    ```bash
+    git add books/<book-name>/reports && git commit -m "Add source reports for <book-name>"
+    git push origin main
+    ```
+    This makes the exact source corpus durable and visible before Phase 1 planning begins. If push fails, STOP and fix Git/auth/remotes before queuing tasks.
+10. **Archive Old Tasks:** Archive ALL existing tasks on the `booksmith` board from previous runs (not just completed ones — blocked and todo tasks also need clearing):
     ```bash
     hermes kanban --board booksmith list --json | python3 -c "import sys,json; [print(t['id']) for t in json.load(sys.stdin)]"
     ```
     Then archive them: `hermes kanban --board booksmith archive <task_ids...>`
-10. **Create Kanban Tasks:** Create all pipeline tasks with parent-child linking (capture each task ID and pass it as a parent to the next):
+11. **Create Kanban Tasks:** Create all pipeline tasks with parent-child linking (capture each task ID and pass it as a parent to the next):
 
 ```python
 t1 = kanban_create(
     title="Phase 1: Planning - Generate Book Bible & Prompts",
-    assignee="booksmith-planner",
+    assignee="booksmith-creator",
     body=f"""Analyze the five research reports in books/{book_name}/reports/. Generate a comprehensive Book Bible and individual Chapter Prompts following templates/book_bible_template.md and templates/chapter_prompt_template.md.
 
 CRITICAL: At the top of the Book Bible, include an explicit 'Report Mapping' section that lists each report number (1-5) alongside its exact filename, source authorities, and core topic. This crosswalk prevents confusion in later phases about which report covers what subject matter.
@@ -104,7 +110,7 @@ The block message must ask the user to check title/subtitle, thesis, chapter seq
 
 t2 = kanban_create(
     title="Phase 2: Drafting - Serial Chapter Generation & Self-Review",
-    assignee="booksmith-author",
+    assignee="booksmith-creator",
     body=f"""Draft all chapters serially from prompts in books/{book_name}/planning/chapter_prompts/. For each chapter: read the prompt + book bible, extract the Required Source Files list from the chapter prompt, read those exact report files before drafting, draft the chapter, save a brief source-use sidecar note listing files read and main facts used, self-review against templates/self_review_template.md, then automatically revise once to fix all issues found by the self-review before moving to the next chapter. Save drafts, source-use notes, and self-review notes to books/{book_name}/chapters/.
 
 Do not use unrelated reports for a chapter unless the Book Bible or chapter prompt explicitly requires them. The source-use sidecar should make routing auditable by listing the exact files read and the main facts used from each file.
@@ -128,7 +134,7 @@ After all chapters pass self-review, commit this phase output:
 
 t3 = kanban_create(
     title="Phase 3: Manuscript Review - Full Text Analysis",
-    assignee="booksmith-author",
+    assignee="booksmith-reviewer",
     body=f"""Review the complete manuscript in books/{book_name}/chapters/. Check for pacing, cross-chapter continuity, redundancy, and whether the chapter body is structurally sound enough for logues. Save notes to books/{book_name}/review/manuscript_review.md.
 
 IMPORTANT: During review, flag any formatting issues that must be cleaned before final assembly: horizontal rules (`---`), subheadings (`##`, `###`) within chapter text, italic subtitle lines after chapter titles, excessive cross-chapter references ("Chapter X explains..."), and overuse of bold/italics in body prose. Note these for Phase 5 cleanup.
@@ -142,7 +148,7 @@ After saving the manuscript review, commit this phase output:
 
 t4 = kanban_create(
     title="Phase 4: Logues Writing - Foreword, Intro, Prologue, Epilogue, Glossary",
-    assignee="booksmith-author",
+    assignee="booksmith-creator",
     body=f"""Write supplementary material based on the manuscript and book bible. Check config.yaml for which logues are enabled (logues_included). Write each enabled logue type and save to books/{book_name}/logues/.
 
 COMPREHENSIVE OUTPUT FORMATTING RULES (apply to ALL logues):
@@ -190,7 +196,7 @@ After push succeeds, send a Telegram completion notification to the user contain
 )[task_id]
 ```
 
-11. **Report Back:** Tell the user: "All 5 phases queued on Kanban board. Dispatcher will execute sequentially — you'll see progress as each task moves from ready → done."
+12. **Report Back:** Tell the user: "All 5 phases queued on Kanban board. Dispatcher will execute sequentially — you'll see progress as each task moves from ready → done."
 
 ### Phase Execution Notes (Dispatcher Handles This)
 
@@ -223,6 +229,8 @@ For token-cost control, production cost gates, prompt-caching cautions, and cont
 
 For production hardening requirements discovered during real pipeline preparation (phase commits, no-overwrite safety, preflight validation, auto-revision-before-blocking, final notification, and explicit glossary ordering), see `references/production-hardening.md`.
 
+For the operator-level production preflight checklist, including report staging validation, source-input commit/push before task creation, and `dir:` Kanban workspace usage, see `references/production-preflight.md`.
+
 ## Kanban Reference
 
 For detailed task graph structure, review gate patterns, and pitfall avoidance, see `references/kanban-patterns.md`.
@@ -233,4 +241,4 @@ For detailed task graph structure, review gate patterns, and pitfall avoidance, 
 *   **Missing/Invalid Reports:** Production preflight must find exactly 5 non-empty, non-duplicate markdown reports with detectable headings/titles. If validation fails, stop and ask the user to fix the reports before creating Kanban tasks.
 *   **Profile Errors:** If a task fails, check the gateway is running for that profile and retry with clearer instructions.
 *   **Kanban Task Stuck:** If a task stays in `todo` too long, verify parent completed successfully and gateway is active. Use `hermes kanban show <task_id>` to inspect.
-*   **Unknown Assignee:** The dispatcher silently drops tasks assigned to non-existent profiles. Always assign to `booksmith-planner`, `booksmith-author`, or `default`.
+*   **Unknown Assignee:** The dispatcher silently drops tasks assigned to non-existent profiles. Always assign to `booksmith-creator`, `booksmith-reviewer`, or `default`.

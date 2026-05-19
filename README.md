@@ -19,7 +19,7 @@ The pipeline is managed by a **Hermes Skill** that orchestrates work through a *
 
 ```
 You invoke skill → Phase 0 creates directory + queues all Kanban tasks → 
-Dispatcher picks up T1 (planner) → blocks for planning approval → you unblock → auto-promotes T2 (author) → 
+Dispatcher picks up T1 (creator) → blocks for planning approval → you unblock → auto-promotes T2 (creator) → 
 Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 execute automatically
 ```
 
@@ -33,13 +33,13 @@ Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 exe
 Before running the pipeline:
 
 1. **Hermes Profiles** must exist and be configured with your chosen models:
-   - `booksmith-planner` (Sonnet 4.6 for planning)
-   - `booksmith-author` (Opus 4.7 for drafting/logues, Sonnet 4.6 for review — *or use Sonnet 4.6 for all phases during test runs to reduce costs*)
+   - `booksmith-creator` (Opus/frontier model for planning, drafting, and logues)
+   - `booksmith-reviewer` (Sonnet/strong reviewer model for manuscript review)
 
 **Note:** Model selections are managed by Hermes Profiles, not in `config.yaml`. Edit profile settings via `hermes -p <profile-name> model` or the profile config files. You can switch models per-profile at any time without touching the pipeline logic.
    ```bash
-   booksmith-planner gateway start
-   booksmith-author gateway start
+   booksmith-creator gateway start
+   booksmith-reviewer gateway start
    ```
 3. **Git repository** at `/home/emkay/projects/booksmith/` with remote configured (`origin`).
 
@@ -47,10 +47,10 @@ Before running the pipeline:
 
 | Task | Title | Assignee | Description |
 |------|-------|----------|-------------|
-| T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts with per-chapter Required Source Files, then block for human approval |
-| T2 | Phase 2: Drafting | booksmith-author | Serial chapter drafts only from required source files, with source-use notes and self-review. Does not draft logues. Blocks if chapters need human review. |
-| T3 | Phase 3: Manuscript Review | booksmith-author | Full manuscript review for pacing, continuity, redundancy, and structural readiness for logues. Blocks before Phase 4 if major chapter fixes are needed. |
-| T4 | Phase 4: Logues Writing | booksmith-author | Foreword, intro, prologue, epilogue, glossary (configurable) |
+| T1 | Phase 1: Planning | booksmith-creator | Analyze reports → generate Book Bible + Chapter Prompts with per-chapter Required Source Files, then block for human approval |
+| T2 | Phase 2: Drafting | booksmith-creator | Serial chapter drafts only from required source files, with source-use notes and self-review. Does not draft logues. Blocks if chapters need human review. |
+| T3 | Phase 3: Manuscript Review | booksmith-reviewer | Full manuscript review for pacing, continuity, redundancy, and structural readiness for logues. Blocks before Phase 4 if major chapter fixes are needed. |
+| T4 | Phase 4: Logues Writing | booksmith-creator | Foreword, intro, prologue, epilogue, glossary (configurable) |
 | T5 | Phase 5: Finalizing | default | Stitch all parts into final manuscript, commit & push |
 
 **Human intervention points:**
@@ -62,11 +62,11 @@ Before running the pipeline:
 
 | Phase | Model | Role |
 |-------|-------|------|
-| Planning | Claude Sonnet 4.6 | Outline, book bible, chapter prompts |
-| Drafting | Claude Opus 4.7 | Chapter drafts (primary generation) |
-| Self-Review | Claude Sonnet 4.6 | Per-chapter quality gate |
-| Manuscript Review | Claude Sonnet 4.6 | Full manuscript review |
-| Logues | Claude Opus 4.7 | Supplementary material |
+| Planning | Creator profile (Opus/frontier) | Outline, book bible, chapter prompts |
+| Drafting | Creator profile (Opus/frontier) | Chapter drafts (primary generation) |
+| Self-Review | Creator profile | Per-chapter quality gate and automatic fix pass |
+| Manuscript Review | Reviewer profile (Sonnet/strong reviewer) | Full manuscript review |
+| Logues | Creator profile (Opus/frontier) | Supplementary material |
 
 ## Estimated Cost
 
@@ -105,8 +105,8 @@ booksmith/                          ← project root (git-tracked)
 
 1. **Start gateways** (if not already running):
    ```bash
-   booksmith-planner gateway start
-   booksmith-author gateway start
+   booksmith-creator gateway start
+   booksmith-reviewer gateway start
    ```
 
 2. **Invoke the skill:** Send "run booksmith for <book-name>" via Telegram. The book name is normalized to lowercase-hyphens (e.g., "Zero Trust" → `zero-trust`).
@@ -162,7 +162,7 @@ Per-book commits are made during pipeline execution:
 | Problem | Solution |
 |---------|----------|
 | Task stuck in `todo` | Parent didn't complete, or gateway for that profile isn't running. Check with `hermes kanban show <task_id>` |
-| Task assigned to unknown profile | Dispatcher silently drops tasks assigned to non-existent profiles. Verify assignee is `booksmith-planner`, `booksmith-author`, or `default` |
+| Task assigned to unknown profile | Dispatcher silently drops tasks assigned to non-existent profiles. Verify assignee is `booksmith-creator`, `booksmith-reviewer`, or `default` |
 | Gateway not responding | Start manually: `<profile-name> gateway start`. Gateways are off by default for cost control |
 | Missing reports error | Phase 0 requires exactly 5 markdown files in `reports/`. Place them and reply "ready" |
 | Git push fails | Check remote is configured correctly (`git remote -v`) |

@@ -5,7 +5,7 @@
 All 5 phases are created upfront in Phase 0 with strict parent-child linking:
 
 ```
-T1 (booksmith-planner) → T2 (booksmith-author) → T3 (booksmith-author) → T4 (booksmith-author) → T5 (default)
+T1 (booksmith-creator) → T2 (booksmith-creator) → T3 (booksmith-reviewer) → T4 (booksmith-creator) → T5 (default)
 ```
 
 Each task's `parents=[previous_task_id]` ensures the dispatcher auto-promotes only when the prior phase completes. No manual coordination needed between phases.
@@ -15,9 +15,11 @@ Each task's `parents=[previous_task_id]` ensures the dispatcher auto-promotes on
 Phase 0 captures each returned task ID and passes it as a parent to the next creation call. This is critical — creating all tasks in parallel without linking creates a race window where the dispatcher can claim children before parents exist.
 
 ```python
-t1 = kanban_create(title="...", assignee="booksmith-planner", body="...")[task_id]
-t2 = kanban_create(title="...", assignee="booksmith-author", body="...", parents=[t1])[task_id]
-# ... etc
+t1 = kanban_create(title="...", assignee="booksmith-creator", body="...")[task_id]
+t2 = kanban_create(title="...", assignee="booksmith-creator", body="...", parents=[t1])[task_id]
+t3 = kanban_create(title="...", assignee="booksmith-reviewer", body="...", parents=[t2])[task_id]
+t4 = kanban_create(title="...", assignee="booksmith-creator", body="...", parents=[t3])[task_id]
+t5 = kanban_create(title="...", assignee="default", body="...", parents=[t4])[task_id]
 ```
 
 ## Review Gate Pattern (Phase 2)
@@ -42,9 +44,9 @@ The worker profile reads the body as its prompt. No external context injection n
 
 ## Old Task Cleanup
 
-Before creating new tasks per book, archive completed tasks from previous runs:
+Before creating new tasks per book, archive all active tasks from previous runs, including blocked and todo tasks:
 ```bash
-hermes kanban --board booksmith list --json | python3 -c "import sys,json; [print(t['id']) for t in json.load(sys.stdin) if t.get('completed_at')]"
+hermes kanban --board booksmith list --json | python3 -c "import sys,json; [print(t['id']) for t in json.load(sys.stdin)]"
 hermes kanban --board booksmith archive <task_ids...>
 ```
 

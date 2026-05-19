@@ -33,8 +33,8 @@ git status --short --branch
 Start gateways if needed:
 
 ```bash
-booksmith-planner gateway start
-booksmith-author gateway start
+booksmith-creator gateway start
+booksmith-reviewer gateway start
 ```
 
 Check the Kanban board is not carrying stale active tasks:
@@ -106,10 +106,10 @@ Watch for:
 
 Expected pattern:
 
-- Phase 1 planning: `booksmith-planner`, normally Sonnet.
-- Phase 2 drafting: `booksmith-author`, normally Opus or the configured test model.
-- Phase 3 review: review-capable model, normally Sonnet.
-- Phase 4 logues: author profile.
+- Phase 1 planning: `booksmith-creator`, normally Opus/frontier model.
+- Phase 2 drafting: `booksmith-creator`, normally Opus/frontier model.
+- Phase 3 review: `booksmith-reviewer`, normally Sonnet/strong reviewer model.
+- Phase 4 logues: `booksmith-creator`.
 - Phase 5 finalizing: default worker, mostly assembly/cleanup.
 
 Warning signs:
@@ -123,8 +123,8 @@ Warning signs:
 If token usage looks wrong, pause first and inspect second:
 
 ```bash
-booksmith-planner gateway stop
-booksmith-author gateway stop
+booksmith-creator gateway stop
+booksmith-reviewer gateway stop
 ```
 
 ### 2. Kanban Board
@@ -164,8 +164,8 @@ Watch for:
 Known valid assignees:
 
 ```text
-booksmith-planner
-booksmith-author
+booksmith-creator
+booksmith-reviewer
 default
 ```
 
@@ -243,7 +243,7 @@ Chapter 4 and Chapter 5 are too similar. Merge the infrastructure material into 
 /unblock <planning_task_id>
 ```
 
-The planner should apply corrections, commit them, then complete Phase 1. Only then should Phase 2 begin.
+The creator should apply corrections, commit them, then complete Phase 1. Only then should Phase 2 begin.
 
 ## Monitoring Drift
 
@@ -280,12 +280,12 @@ Signs:
 
 Intervention:
 
-- Stop the author gateway.
+- Stop the creator gateway.
 - Inspect the active task and latest files.
 - Decide whether to resume, correct via task feedback, or revert.
 
 ```bash
-booksmith-author gateway stop
+booksmith-creator gateway stop
 hermes kanban --board booksmith list --json
 hermes kanban show <task_id>
 git status --short --branch
@@ -304,8 +304,8 @@ Signs:
 Intervention:
 
 ```bash
-booksmith-planner gateway stop
-booksmith-author gateway stop
+booksmith-creator gateway stop
+booksmith-reviewer gateway stop
 ```
 
 Then inspect:
@@ -340,15 +340,15 @@ Keep the current title, but revise the chapter sequence so infrastructure comes 
 Use when cost, model choice, source routing, or output direction looks wrong.
 
 ```bash
-booksmith-planner gateway stop
-booksmith-author gateway stop
+booksmith-creator gateway stop
+booksmith-reviewer gateway stop
 ```
 
 Resume:
 
 ```bash
-booksmith-planner gateway start
-booksmith-author gateway start
+booksmith-creator gateway start
+booksmith-reviewer gateway start
 ```
 
 ### Inspect a Task
@@ -426,8 +426,8 @@ If the process appears out of control:
 1. Stop gateways:
 
 ```bash
-booksmith-planner gateway stop
-booksmith-author gateway stop
+booksmith-creator gateway stop
+booksmith-reviewer gateway stop
 ```
 
 2. Check active tasks:
