@@ -57,5 +57,5 @@ Key data points, quotes, or findings to incorporate:
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly
-- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.
+- Aim for about 5,000 words.
 - Maintain consistent POV and tense throughout

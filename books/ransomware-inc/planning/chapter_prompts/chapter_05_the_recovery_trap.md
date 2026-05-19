@@ -73,7 +73,7 @@ End on the chilling realization that the attackers do not need to encrypt anythi
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly.
-- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.
+- Aim for about 5,000 words.
 - Maintain consistent POV and tense throughout.
 - ONLY `# Chapter 5: The Recovery Trap` as the heading — no subheadings inside the chapter body.
 - No horizontal rules, no italic subtitle line, no bracketed citations.

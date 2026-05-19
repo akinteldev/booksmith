@@ -96,10 +96,6 @@ The vignette is your bridge between data and empathy. It must:
 
 ### Total Chapters: 9
 
-### Chapter Length Guidance
-
-Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.
-
 ### Part Structure
 
 The book is organized into three parts, each with three chapters.
