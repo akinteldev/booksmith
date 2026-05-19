@@ -11,7 +11,8 @@ Booksmith has these human control points:
 1. **Input gate** — you place the five reports and reply `ready`.
 2. **Planning approval gate** — mandatory. Phase 1 blocks after creating the Book Bible and chapter prompts. Drafting cannot start until you approve or provide corrections with `/unblock <task_id>`.
 3. **Chapter issue gate** — conditional. Phase 2 drafts all chapters serially. It only blocks if self-review finds critical unresolved issues after one automatic revision pass.
-4. **Final inspection** — after final assembly and push, inspect the final manuscript before publication/export.
+4. **Manuscript structure gate** — conditional. Phase 3 blocks before logues if review finds major chapter/body issues that would make the framing stale or misleading.
+5. **Final inspection** — after final assembly and push, inspect the final manuscript before publication/export.
 
 There is intentionally **no first-chapter/sample review gate**. After planning approval, Booksmith drafts all chapters serially unless a critical issue is detected.
 
@@ -199,6 +200,7 @@ Expected phase outputs:
   - self-review notes, e.g. `chapter_01_*.self_review.md`
 - Phase 3:
   - `books/<book-name>/review/manuscript_review.md`
+  - blocks before Phase 4 if the chapter body is not structurally sound enough for logues
 - Phase 4:
   - enabled logues in `books/<book-name>/logues/`
 - Phase 5:

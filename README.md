@@ -49,7 +49,7 @@ Before running the pipeline:
 |------|-------|----------|-------------|
 | T1 | Phase 1: Planning | booksmith-planner | Analyze reports → generate Book Bible + Chapter Prompts with per-chapter Required Source Files, then block for human approval |
 | T2 | Phase 2: Drafting | booksmith-author | Serial chapter drafts only from required source files, with source-use notes and self-review. Does not draft logues. Blocks if chapters need human review. |
-| T3 | Phase 3: Manuscript Review | booksmith-author | Full manuscript review for pacing, continuity, redundancy |
+| T3 | Phase 3: Manuscript Review | booksmith-author | Full manuscript review for pacing, continuity, redundancy, and structural readiness for logues. Blocks before Phase 4 if major chapter fixes are needed. |
 | T4 | Phase 4: Logues Writing | booksmith-author | Foreword, intro, prologue, epilogue, glossary (configurable) |
 | T5 | Phase 5: Finalizing | default | Stitch all parts into final manuscript, commit & push |
 

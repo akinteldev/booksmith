@@ -129,9 +129,11 @@ After all chapters pass self-review, commit this phase output:
 t3 = kanban_create(
     title="Phase 3: Manuscript Review - Full Text Analysis",
     assignee="booksmith-author",
-    body=f"""Review the complete manuscript in books/{book_name}/chapters/. Check for pacing, cross-chapter continuity, and redundancy. Save notes to books/{book_name}/review/manuscript_review.md.
+    body=f"""Review the complete manuscript in books/{book_name}/chapters/. Check for pacing, cross-chapter continuity, redundancy, and whether the chapter body is structurally sound enough for logues. Save notes to books/{book_name}/review/manuscript_review.md.
 
 IMPORTANT: During review, flag any formatting issues that must be cleaned before final assembly: horizontal rules (`---`), subheadings (`##`, `###`) within chapter text, italic subtitle lines after chapter titles, excessive cross-chapter references ("Chapter X explains..."), and overuse of bold/italics in body prose. Note these for Phase 5 cleanup.
+
+If the manuscript has major structural issues that would make foreword, introduction, prologue, epilogue, or glossary stale or misleading, block this task with `kanban_block()` and list the required chapter fixes. Do not complete Phase 3 or allow Phase 4 logues to start until the chapter body is structurally sound.
 
 After saving the manuscript review, commit this phase output:
 `git add books/{book_name}/review && git commit -m "Phase 3: Review manuscript for {book_name}"`""",
