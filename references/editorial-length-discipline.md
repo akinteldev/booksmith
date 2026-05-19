@@ -6,7 +6,7 @@ Use this when Booksmith chapter prompts, self-reviews, or drafting gates mention
 
 ## Durable Lesson
 
-A chapter that cleanly tells its assigned story at ~4,000 words should not be forced to 5,500–7,000 words solely to satisfy a range. Forced expansion is a high-risk path to padding, vague abstraction, invented scene detail, or hallucinated specificity.
+A chapter that cleanly tells its assigned story should not be forced longer solely to satisfy a numeric target. Forced expansion is a high-risk path to padding, vague abstraction, invented scene detail, or hallucinated specificity.
 
 ## Operational Rule
 
@@ -35,8 +35,8 @@ Do not add invented specificity to reach length. Composite vignettes should clea
 
 Replace strict language like:
 
-> Target length: 5,500–7,000 words.
+> Target length: X–Y words.
 
 with softer language such as:
 
-> Expected length: write to editorial completeness. Most chapters may fall around 4,000–6,500 words, but do not pad to reach a number. If the assigned story is complete, concise is preferred.
+> Expected length: write to editorial completeness. Do not pad to reach a number. If the assigned story is complete, concise is preferred.

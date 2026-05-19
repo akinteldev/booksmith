@@ -98,7 +98,7 @@ The vignette is your bridge between data and empathy. It must:
 
 ### Chapter Length Guidance
 
-Expected length: write to editorial completeness. Most chapters will likely fall around 4,000–6,500 words, but do not pad to reach a number. If the assigned story is complete, source coverage is sufficient, and the narrative arc closes cleanly, concise is preferred. Self-review must not mark a chapter as requiring expansion solely because it is below an expected range. Expansion is justified only when it adds missing sourced substance, missing narrative connective tissue, or required prompt coverage.
+Editorial completeness matters more than length. Let source depth, narrative function, and natural stopping point determine final length. Do not pad, repeat, or invent material to reach a number.
 
 ### Part Structure
 

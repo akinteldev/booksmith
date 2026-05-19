@@ -73,7 +73,7 @@ End on the chilling realization that the attackers do not need to encrypt anythi
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly.
-- Expected length: write to editorial completeness. Most chapters likely fall around 4,000–6,500 words, but do not pad to reach a number. If the assigned story is complete and source coverage is sufficient, concise is preferred.
+- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length. If the assigned story is complete and source coverage is sufficient, concise is preferred.
 - Maintain consistent POV and tense throughout.
 - ONLY `# Chapter 5: The Recovery Trap` as the heading — no subheadings inside the chapter body.
 - No horizontal rules, no italic subtitle line, no bracketed citations.

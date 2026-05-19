@@ -69,7 +69,7 @@ End on the recognition that the map of victims is also a map of operational frag
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly.
-- Expected length: write to editorial completeness. Most chapters likely fall around 4,000–6,500 words, but do not pad to reach a number. If the assigned story is complete and source coverage is sufficient, concise is preferred.
+- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length. If the assigned story is complete and source coverage is sufficient, concise is preferred.
 - Maintain consistent POV and tense throughout.
 - ONLY `# Chapter 4: The Map of Coercion` as the heading — no subheadings inside the chapter body.
 - No horizontal rules, no italic subtitle line, no bracketed citations.
