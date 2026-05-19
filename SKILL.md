@@ -109,7 +109,7 @@ t2 = kanban_create(
 
 Do not use unrelated reports for a chapter unless the Book Bible or chapter prompt explicitly requires them. The source-use sidecar should make routing auditable by listing the exact files read and the main facts used from each file.
 
-COMPREHENSIVE OUTPUT FORMATTING RULES (apply to ALL chapters and logues):
+COMPREHENSIVE OUTPUT FORMATTING RULES (Phase 2 chapters only — do not draft foreword, introduction, prologue, epilogue, glossary, or any other logue in this phase):
 - ONLY `# Chapter N: Title` as headings — NO `##`, `###`, or any subheadings within chapter text. Subheadings bloat the Kindle TOC and break clean reading flow.
 - NO horizontal rules (`---`) anywhere in output — these break docx conversion for Kindle Create. Use blank lines between paragraphs/sections only.
 - NO italic subtitle line after the chapter title. The `# Chapter N: Title` is sufficient; do not add `*Subtitle text*` beneath it.
@@ -139,7 +139,7 @@ After saving the manuscript review, commit this phase output:
 )[task_id]
 
 t4 = kanban_create(
-    title="Phase 4: Logues Writing - Foreword, Intro, Epilogue, Glossary",
+    title="Phase 4: Logues Writing - Foreword, Intro, Prologue, Epilogue, Glossary",
     assignee="booksmith-author",
     body=f"""Write supplementary material based on the manuscript and book bible. Check config.yaml for which logues are enabled (logues_included). Write each enabled logue type and save to books/{book_name}/logues/.
 
