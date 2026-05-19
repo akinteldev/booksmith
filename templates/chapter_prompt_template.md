@@ -57,5 +57,5 @@ Key data points, quotes, or findings to incorporate:
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly
-- Write to editorial completeness. Let the chapter's source depth, narrative function, and natural stopping point determine the final length. Do not pad, repeat, or invent material to reach a number.
+- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.
 - Maintain consistent POV and tense throughout

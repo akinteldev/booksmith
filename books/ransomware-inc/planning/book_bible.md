@@ -98,7 +98,7 @@ The vignette is your bridge between data and empathy. It must:
 
 ### Chapter Length Guidance
 
-Editorial completeness matters more than length. Let source depth, narrative function, and natural stopping point determine final length. Do not pad, repeat, or invent material to reach a number.
+Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.
 
 ### Part Structure
 

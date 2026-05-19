@@ -39,4 +39,4 @@ Replace strict language like:
 
 with softer language such as:
 
-> Expected length: write to editorial completeness. Do not pad to reach a number. If the assigned story is complete, concise is preferred.
+> Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.

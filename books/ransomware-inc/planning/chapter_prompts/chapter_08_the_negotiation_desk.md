@@ -76,7 +76,7 @@ End on the recognition that the negotiation desk is the visible part of an icebe
 
 ## Style Reminders
 - Follow the book bible's voice guidelines exactly.
-- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length. If the assigned story is complete and source coverage is sufficient, concise is preferred.
+- Length: write to editorial completeness. Let source depth, narrative function, and natural stopping point determine final length.
 - Maintain consistent POV and tense throughout.
 - ONLY `# Chapter 8: The Negotiation Desk` as the heading — no subheadings inside the chapter body.
 - No horizontal rules, no italic subtitle line, no bracketed citations.
