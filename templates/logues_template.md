@@ -17,11 +17,11 @@ You are writing supplementary material for a book based on five research reports
 
 ### Maximum Lengths
 
-- Foreword: 900 words maximum.
-- Introduction: 1,500 words maximum.
-- Prologue: 1,500 words maximum.
-- Epilogue: 1,200 words maximum.
-- Glossary: 2,000 words maximum.
+- Foreword: aim for 900 words.
+- Introduction: aim for 1,500 words.
+- Prologue: aim for 1,500 words.
+- Epilogue: aim for 1,200 words.
+- Glossary: aim for 2,000 words.
 
 ### Required Content
 {{specific_requirements_for_this_logue}}
