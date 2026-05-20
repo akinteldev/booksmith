@@ -26,7 +26,7 @@ Open these before invoking the workflow:
 - Booksmith repo terminal:
 
 ```bash
-cd /home/emkay/projects/booksmith
+cd /home/akay/projects/booksmith
 git status --short --branch
 ```
 
@@ -445,7 +445,7 @@ hermes kanban show <task_id>
 4. Check files and commits:
 
 ```bash
-cd /home/emkay/projects/booksmith
+cd /home/akay/projects/booksmith
 git status --short --branch
 git log --oneline -5
 find books/<book-name> -maxdepth 3 -type f | sort
