@@ -1,4 +1,4 @@
-i![BOOKSMITH](assets/booksmith_banner.jpg)
+![BOOKSMITH](assets/booksmith_banner.jpg)
 
 # Booksmith — Automated Book Pipeline
 
