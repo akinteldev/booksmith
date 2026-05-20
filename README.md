@@ -24,7 +24,7 @@ Drafts chapters, blocks if flagged → you unblock via /unblock → T3/T4/T5 exe
 - **Parent-child linking enforces sequence.** T2 waits for T1 to complete; T3 waits for T2; and so on. The dispatcher auto-promotes children when parents finish (polls every ~60s).
 - **Human-in-the-loop via blocking.** Phase 1 blocks for mandatory planning approval. Phase 2 only blocks if self-review leaves unresolved critical issues after one automatic revision pass. You provide feedback via `/unblock <task_id>` and execution resumes.
 
-More here:
+**More here:**
 - [Booksmith Hands-On Operator Guide](docs/booksmith-hands-on-operator-guide.md) — how to invoke, monitor, approve, pause, and intervene during real runs.
 - [Booksmith Tabletop Dry Run](docs/booksmith-tabletop-dry-run.md) — a timeline of what you do, what Hermes does, and what the model does.
 
