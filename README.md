@@ -11,7 +11,7 @@ Booksmith is a fully automated book creation pipeline that transforms five compr
 
 ## Architecture
 
-The pipeline is managed by a **Hermes Skill** that orchestrates work through a **Kanban board**. All phases are queued as linked tasks on the `booksmith` Kanban board — the dispatcher executes them sequentially via parent-child dependencies, giving full visibility into every phase.
+The pipeline is managed by a **[Hermes](https://hermes-agent.nousresearch.com/) Skill** that orchestrates work through a **Kanban board**. All phases are queued as linked tasks on the `booksmith` Kanban board — the dispatcher executes them sequentially via parent-child dependencies, giving full visibility into every phase.
 
 ### How It Works
 
