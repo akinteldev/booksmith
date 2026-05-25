@@ -5,7 +5,7 @@ Use this checklist before queueing a new production Booksmith run.
 ## 1. Repository state
 
 ```bash
-cd /home/emkay/projects/booksmith
+cd /home/akay/projects/booksmith
 git status --short --branch
 git fetch origin
 git status --short --branch
@@ -110,7 +110,7 @@ Archive blocked and todo tasks too, not only completed tasks.
 Production Kanban tasks should run in the actual repo workspace, not scratch directories:
 
 ```text
---workspace dir:/home/emkay/projects/booksmith --skill booksmith
+--workspace dir:/home/akay/projects/booksmith --skill booksmith
 ```
 
 This keeps file writes and phase commits in the intended monorepo.
